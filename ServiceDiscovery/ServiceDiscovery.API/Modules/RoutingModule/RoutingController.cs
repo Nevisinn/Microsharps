@@ -23,7 +23,7 @@ public class RoutingController : ControllerBase
     [HttpPost]
     public ActionResult<RegisterServiceResponse> RegisterService([FromBody] RegisterServiceRequest request)
     {
-        var host = Request.Host.Value;
+        var host = BuildHost(Request);
         if (string.IsNullOrEmpty(host))
             return BadRequest("Can not determine host of request");
 
@@ -49,5 +49,22 @@ public class RoutingController : ControllerBase
     {
         var response = routingService.RemoveService(RoutingApiMapper.Map(request));
         return response.ActionResult();
+    }
+
+    private string? BuildHost(HttpRequest request)
+    {
+        var fullHost = request.Host;
+        var host = fullHost.Host;
+        var port = fullHost.Port;
+        if (string.IsNullOrEmpty(host))
+            return null;
+
+        host = host == "localhost" 
+            ? "127.0.0.1"
+            : request.Host.Value;
+        var portStr = port != null 
+            ? $":{port}" 
+            : "";
+        return host + portStr;
     }
 }

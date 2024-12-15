@@ -1,4 +1,7 @@
 using System.Collections.Concurrent;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using Infrastructure;
 using ServiceDiscovery.API.Logic.ServicesModule.DTO;
 
@@ -13,13 +16,14 @@ public interface IRoutingService
 
 public class RoutingService : IRoutingService
 {
-    private readonly ConcurrentDictionary<string, List<string>> hostsByService;
+    private readonly ConcurrentDictionary<string, List<string>> hostsByService; // TODO: Add ThreadSafeList
     private readonly Random random;
 
-    public RoutingService()
+    public RoutingService(TimeSpan healthCheckingDelay) // TODO: logger
     {
         hostsByService = new ConcurrentDictionary<string, List<string>>();
         random = new Random();
+        StartHealthPing(healthCheckingDelay, new CancellationToken());
     }
 
     public Result<RegisterServiceResponse> RegisterService(RegisterServiceRequest request)
@@ -71,4 +75,46 @@ public class RoutingService : IRoutingService
     
     private List<string> GetHosts(string serviceName) 
         => hostsByService.GetOrAdd(serviceName, _ => new List<string>());
+
+    private async Task StartHealthPing(TimeSpan healthCheckingDelay, CancellationToken token)
+    {
+        async Task Ping()
+        {
+            foreach (var serviceWithHosts in hostsByService)
+            {
+                var hosts = serviceWithHosts.Value;
+                foreach (var host in hosts)
+                {
+                    try
+                    {
+                        var endPoint = IPEndPoint.Parse(host);
+                        using var tcpClient = new TcpClient();
+                        await tcpClient.ConnectAsync(endPoint);
+                        if (!tcpClient.Connected)
+                            throw new SocketException();
+                        Console.WriteLine($"Success connection with host: {host}.");
+                    }
+                    catch (SocketException socketEx)
+                    {
+                        Console.WriteLine($"Can not connect to host: {host}. It will be removed");
+                        lock (hosts)
+                        {
+                            hosts.Remove(host);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message + Environment.NewLine + e.StackTrace);
+                    }
+                }
+            }
+            
+        }
+
+        while (!token.IsCancellationRequested)
+        {
+            await Task.Delay(healthCheckingDelay);
+            await Ping();
+        }
+    }
 }

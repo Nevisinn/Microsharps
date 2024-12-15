@@ -11,7 +11,7 @@ builder.Services.AddSwaggerGen(opt =>
     opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-builder.Services.AddSingleton<IRoutingService, RoutingService>();
+builder.Services.AddSingleton<IRoutingService, RoutingService>(_ => new RoutingService(TimeSpan.FromSeconds(10))); // TODO: Config
 
 var app = builder.Build();
 

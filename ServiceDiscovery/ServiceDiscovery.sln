@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.API", "..\In
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDiscovery.API", "ServiceDiscovery.API\ServiceDiscovery.API.csproj", "{4306A537-A487-4AE0-BEEB-4787B8D03CA9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDiscovery.Client", "ServiceDiscovery.Client\ServiceDiscovery.Client.csproj", "{DB5324FD-1E4A-4F45-A52A-72BB24BE1228}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{4306A537-A487-4AE0-BEEB-4787B8D03CA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4306A537-A487-4AE0-BEEB-4787B8D03CA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4306A537-A487-4AE0-BEEB-4787B8D03CA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB5324FD-1E4A-4F45-A52A-72BB24BE1228}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB5324FD-1E4A-4F45-A52A-72BB24BE1228}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB5324FD-1E4A-4F45-A52A-72BB24BE1228}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB5324FD-1E4A-4F45-A52A-72BB24BE1228}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

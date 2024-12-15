@@ -23,11 +23,11 @@ public class RoutingController : ControllerBase
     [HttpPost]
     public ActionResult<RegisterServiceResponse> RegisterService([FromBody] RegisterServiceRequest request)
     {
-        var host = BuildHost(Request);
-        if (string.IsNullOrEmpty(host))
-            return BadRequest("Can not determine host of request");
+        var origin = Request.Headers["Sd-host"].FirstOrDefault(); // TODO: headers-name to const/etc
+        if (string.IsNullOrEmpty(origin))
+            return BadRequest("Can not determine origin of request");
 
-        var response = routingService.RegisterService(RoutingApiMapper.Map(request, host));
+        var response = routingService.RegisterService(RoutingApiMapper.Map(request, origin));
         return response.ActionResult();
     }
 
@@ -49,22 +49,5 @@ public class RoutingController : ControllerBase
     {
         var response = routingService.RemoveService(RoutingApiMapper.Map(request));
         return response.ActionResult();
-    }
-
-    private string? BuildHost(HttpRequest request)
-    {
-        var fullHost = request.Host;
-        var host = fullHost.Host;
-        var port = fullHost.Port;
-        if (string.IsNullOrEmpty(host))
-            return null;
-
-        host = host == "localhost" 
-            ? "127.0.0.1"
-            : request.Host.Value;
-        var portStr = port != null 
-            ? $":{port}" 
-            : "";
-        return host + portStr;
     }
 }

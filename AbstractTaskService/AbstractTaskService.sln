@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractTaskService.API", "AbstractTaskService.API\AbstractTaskService.API.csproj", "{93C356B8-63C2-41A5-B374-8B510966778D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractTaskService.Logic", "AbstractTaskService.Logic\AbstractTaskService.Logic.csproj", "{0C7EFBC9-0895-4EFB-A009-2785F5E6800B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractTaskService.Client", "AbstractTaskService.Client\AbstractTaskService.Client.csproj", "{2915F58B-C60F-4EEB-AC87-02DE2AE29709}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{93C356B8-63C2-41A5-B374-8B510966778D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93C356B8-63C2-41A5-B374-8B510966778D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93C356B8-63C2-41A5-B374-8B510966778D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93C356B8-63C2-41A5-B374-8B510966778D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C7EFBC9-0895-4EFB-A009-2785F5E6800B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C7EFBC9-0895-4EFB-A009-2785F5E6800B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C7EFBC9-0895-4EFB-A009-2785F5E6800B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C7EFBC9-0895-4EFB-A009-2785F5E6800B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2915F58B-C60F-4EEB-AC87-02DE2AE29709}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2915F58B-C60F-4EEB-AC87-02DE2AE29709}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2915F58B-C60F-4EEB-AC87-02DE2AE29709}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2915F58B-C60F-4EEB-AC87-02DE2AE29709}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

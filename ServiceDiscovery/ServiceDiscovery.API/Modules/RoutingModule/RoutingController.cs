@@ -2,7 +2,6 @@ using Infrastructure.API;
 using Microsoft.AspNetCore.Mvc;
 using ServiceDiscovery.API.Modules.RoutingModule.DTO;
 using ServiceDiscovery.API.Logic.ServicesModule;
-using RegisterServiceResponse = ServiceDiscovery.API.Logic.ServicesModule.DTO.RegisterServiceResponse;
 
 namespace ServiceDiscovery.API.Modules.RoutingModule;
 
@@ -21,33 +20,39 @@ public class RoutingController : ControllerBase
     /// Регистрирует хост для сервиса
     /// </summary>
     [HttpPost]
-    public ActionResult<RegisterServiceResponse> RegisterService([FromBody] RegisterServiceRequest request)
+    public ActionResult<RegisterServiceResponseModel> RegisterService([FromBody] RegisterServiceRequest request)
     {
-        var origin = Request.Headers["Sd-host"].FirstOrDefault(); // TODO: headers-name to const/etc
-        if (string.IsNullOrEmpty(origin))
-            return BadRequest("Can not determine origin of request");
-
-        var response = routingService.RegisterService(RoutingApiMapper.Map(request, origin));
-        return response.ActionResult();
+        var response = routingService.RegisterHosts(RoutingApiMapper.Map(request));
+        return response.ActionResult(RoutingApiMapper.Map);
     }
 
     /// <summary>
     /// Достаёт рандомный хост у сервиса
     /// </summary>
     [HttpGet("{serviceName}")]
-    public ActionResult GetService([FromRoute] string serviceName)
+    public ActionResult<GetServiceHostResponseModel> GetServiceHost([FromRoute] string serviceName)
     {
-        var response = routingService.GetService(serviceName);
-        return response.ActionResult();
+        var response = routingService.GetServiceHost(serviceName);
+        return response.ActionResult(RoutingApiMapper.Map);
+    }
+    
+    /// <summary>
+    /// Достаёт все хосты у всех сервисов
+    /// </summary>
+    [HttpGet("all")]
+    public ActionResult<GetAllServicesHostsResponseModel> GetAllServiceHosts()
+    {
+        var response = routingService.GetAllServicesWithHosts();
+        return response.ActionResult(RoutingApiMapper.Map);
     }
 
     /// <summary>
     /// Чистит хост сервиса
     /// </summary>
     [HttpDelete]
-    public ActionResult DeleteService([FromBody] RemoveServiceRequest request)
+    public ActionResult<bool> DeleteService([FromBody] RemoveServiceRequest request)
     {
-        var response = routingService.RemoveService(RoutingApiMapper.Map(request));
-        return response.ActionResult();
+        var response = routingService.RemoveHosts(RoutingApiMapper.Map(request));
+        return response.ActionResult<bool, bool>();
     }
 }

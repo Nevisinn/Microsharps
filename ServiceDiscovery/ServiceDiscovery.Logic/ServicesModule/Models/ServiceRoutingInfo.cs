@@ -1,6 +1,6 @@
-namespace ServiceDiscovery.API.Modules.RoutingModule.DTO;
+namespace ServiceDiscovery.API.Logic.ServicesModule.Models;
 
-public class RemoveServiceRequest
+public class ServiceRoutingInfo
 {
     public required string ServiceName { get; set; }
     public required string[] Hosts { get; set; }

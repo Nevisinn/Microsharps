@@ -4,77 +4,95 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using Infrastructure;
 using ServiceDiscovery.API.Logic.ServicesModule.DTO;
+using ServiceDiscovery.API.Logic.ServicesModule.Models;
 
 namespace ServiceDiscovery.API.Logic.ServicesModule;
 
 public interface IRoutingService
 {
-    Result<RegisterServiceResponse> RegisterService(RegisterServiceRequest request);
-    Result<string> GetService(string serviceName);
-    Result<bool> RemoveService(RemoveServiceRequest request);
+    Result<RegisterServiceResponse> RegisterHosts(RegisterServiceRequest request);
+    Result<GetServiceHostResponse> GetServiceHost(string serviceName);
+    Result<ServiceRoutingInfo[]> GetAllServicesWithHosts();
+    Result<bool> RemoveHosts(RemoveServiceRequest request);
 }
 
 public class RoutingService : IRoutingService
 {
-    private readonly ConcurrentDictionary<string, List<string>> hostsByService; // TODO: Add ThreadSafeList
+    private readonly ConcurrentDictionary<string, List<IPEndPoint>> hostsByService; // TODO: Add ThreadSafeList
     private readonly Random random;
 
     public RoutingService(TimeSpan healthCheckingDelay) // TODO: logger
     {
-        hostsByService = new ConcurrentDictionary<string, List<string>>();
+        hostsByService = new ConcurrentDictionary<string, List<IPEndPoint>>();
         random = new Random();
         StartHealthPing(healthCheckingDelay, new CancellationToken());
     }
 
-    public Result<RegisterServiceResponse> RegisterService(RegisterServiceRequest request)
+    public Result<RegisterServiceResponse> RegisterHosts(RegisterServiceRequest request)
     {
-        var newHost = request.Host;
-        var hosts = GetHosts(request.ServiceName);
-        if (!hosts.Contains(newHost))
+        var existedHosts = GetHosts(request.ServiceName);
+        foreach (var newHost in request.Hosts.Select(IPEndPoint.Parse))
         {
-            lock (hosts)
+            if (!existedHosts.Contains(newHost))
             {
-                hosts.Add(newHost);
+                lock (existedHosts)
+                {
+                    existedHosts.Add(newHost);
+                }
+            }
+            else
+            {
+                return Result.BadRequest<RegisterServiceResponse>("Same host already used for this service");
             }
         }
-        else
-        {
-            return Result.BadRequest<RegisterServiceResponse>("Same host already used for this service");
-        }
-
+        
         return Result.Ok(new RegisterServiceResponse
         {
-            Host = newHost,
+            Hosts = existedHosts.Select(e => e.ToString()).ToArray(),
         });
     }
 
-    public Result<string> GetService(string serviceName)
+    public Result<GetServiceHostResponse> GetServiceHost(string serviceName)
     {
         var hosts = GetHosts(serviceName);
         if (hosts.Count == 0)
-            return Result.NotFound<string>("Service has not registered any instances");
+            return Result.NotFound<GetServiceHostResponse>("Service has not registered any instances");
         
         var randomHost = hosts[random.Next(hosts.Count)];
-        return Result.Ok(randomHost);
+        return Result.Ok(new GetServiceHostResponse()
+        {
+            Host = randomHost.ToString()
+        });
     }
 
-    public Result<bool> RemoveService(RemoveServiceRequest request)
+    public Result<ServiceRoutingInfo[]> GetAllServicesWithHosts()
+    {
+        return Result.Ok(hostsByService.Select(e => new ServiceRoutingInfo
+        {
+            ServiceName = e.Key,
+            Hosts = e.Value.Select(ip => ip.ToString()).ToArray(),
+        }).ToArray());
+    }
+
+    public Result<bool> RemoveHosts(RemoveServiceRequest request)
     {
         var hosts = GetHosts(request.ServiceName);
-        var hostToDel = request.Host;
-        if (hosts.Count == 0 || !hosts.Contains(hostToDel))
-            return Result.NoContent<bool>();
-
-        lock (hosts)
+        foreach (var hostToDel in request.Hosts.Select(IPEndPoint.Parse))
         {
-            hosts.Remove(hostToDel);
+            if (!hosts.Contains(hostToDel))
+                continue;
+            
+            lock (hosts)
+            {
+                hosts.Remove(hostToDel);
+            }
         }
-
+        
         return Result.NoContent<bool>();
     }
     
-    private List<string> GetHosts(string serviceName) 
-        => hostsByService.GetOrAdd(serviceName, _ => new List<string>());
+    private List<IPEndPoint> GetHosts(string serviceName) 
+        => hostsByService.GetOrAdd(serviceName, _ => new List<IPEndPoint>());
 
     private async Task StartHealthPing(TimeSpan healthCheckingDelay, CancellationToken token)
     {
@@ -85,16 +103,8 @@ public class RoutingService : IRoutingService
                 var hosts = serviceWithHosts.Value;
                 foreach (var host in hosts)
                 {
-                    try
-                    {
-                        var endPoint = IPEndPoint.Parse(host);
-                        using var tcpClient = new TcpClient();
-                        await tcpClient.ConnectAsync(endPoint);
-                        if (!tcpClient.Connected)
-                            throw new SocketException();
-                        Console.WriteLine($"Success connection with host: {host}.");
-                    }
-                    catch (SocketException socketEx)
+                    var isSuccessConnected = await TryPing(host);
+                    if (!isSuccessConnected)
                     {
                         Console.WriteLine($"Can not connect to host: {host}. It will be removed");
                         lock (hosts)
@@ -102,9 +112,9 @@ public class RoutingService : IRoutingService
                             hosts.Remove(host);
                         }
                     }
-                    catch (Exception e)
+                    else // TODO: remove
                     {
-                        Console.WriteLine(e.Message + Environment.NewLine + e.StackTrace);
+                        Console.WriteLine($"Success connection with host: {host}.");
                     }
                 }
             }
@@ -115,6 +125,23 @@ public class RoutingService : IRoutingService
         {
             await Task.Delay(healthCheckingDelay);
             await Ping();
+        }
+    }
+
+    private async Task<bool> TryPing(IPEndPoint host)
+    {
+        try
+        {
+            using var tcpClient = new TcpClient();
+            await tcpClient.ConnectAsync(host);
+            if (!tcpClient.Connected)
+                return false;
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message + Environment.NewLine + e.StackTrace);
+            return false;
         }
     }
 }

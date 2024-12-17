@@ -13,7 +13,7 @@ public interface IRoutingService
     Result<RegisterServiceResponse> RegisterHosts(RegisterServiceRequest request);
     Result<GetServiceHostResponse> GetServiceHost(string serviceName);
     Result<ServiceRoutingInfo[]> GetAllServicesWithHosts();
-    Result<bool> RemoveHosts(RemoveServiceRequest request);
+    EmptyResult RemoveHosts(RemoveServiceRequest request);
 }
 
 public class RoutingService : IRoutingService
@@ -74,7 +74,7 @@ public class RoutingService : IRoutingService
         }).ToArray());
     }
 
-    public Result<bool> RemoveHosts(RemoveServiceRequest request)
+    public EmptyResult RemoveHosts(RemoveServiceRequest request)
     {
         var hosts = GetHosts(request.ServiceName);
         foreach (var hostToDel in request.Hosts.Select(IPEndPoint.Parse))
@@ -88,7 +88,7 @@ public class RoutingService : IRoutingService
             }
         }
         
-        return Result.NoContent<bool>();
+        return EmptyResult.Success();
     }
     
     private List<IPEndPoint> GetHosts(string serviceName) 
@@ -123,7 +123,7 @@ public class RoutingService : IRoutingService
 
         while (!token.IsCancellationRequested)
         {
-            await Task.Delay(healthCheckingDelay);
+            await Task.Delay(healthCheckingDelay); // TODO: пинги падают после 1 неудачного
             await Ping();
         }
     }

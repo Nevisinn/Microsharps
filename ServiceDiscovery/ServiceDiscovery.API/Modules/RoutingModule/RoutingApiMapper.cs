@@ -10,7 +10,7 @@ namespace ServiceDiscovery.API.Modules.RoutingModule;
 
 public static class RoutingApiMapper
 {
-    public static RegisterServiceRequest Map(DTO.RegisterServiceRequest request)
+    public static RegisterServiceRequest Map(DTO.RegisterServiceRequestModel request)
         => new()
         {
             ServiceName = request.ServiceName,
@@ -42,7 +42,7 @@ public static class RoutingApiMapper
             Hosts = routingInfo.Hosts,
         };
     
-    public static RemoveServiceRequest Map(DTO.RemoveServiceRequest request)
+    public static RemoveServiceRequest Map(DTO.RemoveServiceRequestModel request)
         => new()
         {
             ServiceName = request.ServiceName,

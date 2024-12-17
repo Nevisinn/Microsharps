@@ -20,7 +20,7 @@ public class RoutingController : ControllerBase
     /// Регистрирует хост для сервиса
     /// </summary>
     [HttpPost]
-    public ActionResult<RegisterServiceResponseModel> RegisterService([FromBody] RegisterServiceRequest request)
+    public ActionResult<RegisterServiceResponseModel> RegisterService([FromBody] RegisterServiceRequestModel request)
     {
         var response = routingService.RegisterHosts(RoutingApiMapper.Map(request));
         return response.ActionResult(RoutingApiMapper.Map);
@@ -50,9 +50,9 @@ public class RoutingController : ControllerBase
     /// Чистит хост сервиса
     /// </summary>
     [HttpDelete]
-    public ActionResult<bool> DeleteService([FromBody] RemoveServiceRequest request)
+    public ActionResult DeleteService([FromBody] RemoveServiceRequestModel request)
     {
         var response = routingService.RemoveHosts(RoutingApiMapper.Map(request));
-        return response.ActionResult<bool, bool>();
+        return response.ActionResult();
     }
 }

@@ -1,4 +1,5 @@
 using System.Reflection;
+using Infrastructure.API.Configuration.Application;
 using ServiceDiscovery.API.Logic.ServicesModule;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,19 +16,8 @@ builder.Services.AddSingleton<IRoutingService, RoutingService>(_ => new RoutingS
 
 var app = builder.Build();
 
-app.MapControllers();
-// if (app.Environment.IsDevelopment()) TODO
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-// app.UseHttpsRedirection(); TODO
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseCors(opt => opt.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod()); // TODO
-
+app.BaseConfiguration(
+    useHttps: false,
+    isPrivateHosted: true);
 
 app.Run();

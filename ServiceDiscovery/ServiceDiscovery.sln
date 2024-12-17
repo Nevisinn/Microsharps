@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDiscovery.API", "Ser
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDiscovery.Client", "ServiceDiscovery.Client\ServiceDiscovery.Client.csproj", "{DB5324FD-1E4A-4F45-A52A-72BB24BE1228}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDiscovery.Configuration.Client", "ServiceDiscovery.Configuration.Client\ServiceDiscovery.Configuration.Client.csproj", "{92AFF49E-31BF-4E22-BA78-E9C7D4B2B782}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDiscovery.Models", "ServiceDiscovery.Models\ServiceDiscovery.Models.csproj", "{0BC7C050-B5EC-437B-A4CA-49C738985F4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,9 +38,9 @@ Global
 		{DB5324FD-1E4A-4F45-A52A-72BB24BE1228}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB5324FD-1E4A-4F45-A52A-72BB24BE1228}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB5324FD-1E4A-4F45-A52A-72BB24BE1228}.Release|Any CPU.Build.0 = Release|Any CPU
-		{92AFF49E-31BF-4E22-BA78-E9C7D4B2B782}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{92AFF49E-31BF-4E22-BA78-E9C7D4B2B782}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{92AFF49E-31BF-4E22-BA78-E9C7D4B2B782}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{92AFF49E-31BF-4E22-BA78-E9C7D4B2B782}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BC7C050-B5EC-437B-A4CA-49C738985F4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BC7C050-B5EC-437B-A4CA-49C738985F4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BC7C050-B5EC-437B-A4CA-49C738985F4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BC7C050-B5EC-437B-A4CA-49C738985F4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using Infrastructure;
+using ServiceDiscovery.API.Modules.RoutingModule.DTO;
 
 namespace ServiceDiscovery.Client;
 

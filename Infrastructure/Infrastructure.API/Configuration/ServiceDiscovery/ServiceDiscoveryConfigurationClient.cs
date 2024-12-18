@@ -42,7 +42,7 @@ public class ServiceDiscoveryConfigurationClient : IServiceDiscoveryConfiguratio
         if (!response.IsSuccessStatusCode)
             return Result.BadRequest<RegisterServiceResponseModel>(await response.Content.ReadAsStringAsync());
 
-        var deserializedContent = response.Content.ReadFromJsonAsync<RegisterServiceResponseModel>().Result;
+        var deserializedContent = await response.Content.ReadFromJsonAsync<RegisterServiceResponseModel>();
         if (deserializedContent == null)
             return Result.BadRequest<RegisterServiceResponseModel>("Success Register host, but empty response");
         

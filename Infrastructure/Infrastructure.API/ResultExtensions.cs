@@ -24,4 +24,18 @@ public static class ResultExtensions
             _ => throw new ArgumentException($"Result does not support {statusCode}")
         };
     }
+
+    public static ActionResult<T> ActionResult<T>(this Result<T> result)
+    {
+        var (error, statusCode, value) = result;
+        
+        return statusCode switch
+        {
+            HttpStatusCode.OK => new OkObjectResult(value),
+            HttpStatusCode.NoContent => new NoContentResult(),
+            HttpStatusCode.BadRequest => new BadRequestObjectResult(error),
+            HttpStatusCode.NotFound => new NotFoundObjectResult(error),
+            _ => throw new ArgumentException($"Result does not support {statusCode}")
+        };
+    }
 }

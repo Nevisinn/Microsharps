@@ -1,12 +1,11 @@
 using System.Collections.Concurrent;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using Infrastructure;
-using ServiceDiscovery.API.Logic.ServicesModule.DTO;
-using ServiceDiscovery.API.Logic.ServicesModule.Models;
+using ServiceDiscovery.Logic.ServicesModule.DTO;
+using ServiceDiscovery.Logic.ServicesModule.Models;
 
-namespace ServiceDiscovery.API.Logic.ServicesModule;
+namespace ServiceDiscovery.Logic.ServicesModule;
 
 public interface IRoutingService
 {

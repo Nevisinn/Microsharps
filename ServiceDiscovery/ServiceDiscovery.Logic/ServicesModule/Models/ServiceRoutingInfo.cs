@@ -1,4 +1,4 @@
-namespace ServiceDiscovery.API.Logic.ServicesModule.Models;
+namespace ServiceDiscovery.Logic.ServicesModule.Models;
 
 public class ServiceRoutingInfo
 {

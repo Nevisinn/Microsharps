@@ -1,4 +1,4 @@
-namespace ServiceDiscovery.API.Logic.ServicesModule.DTO;
+namespace ServiceDiscovery.Logic.ServicesModule.DTO;
 
 public class RemoveServiceRequest
 {

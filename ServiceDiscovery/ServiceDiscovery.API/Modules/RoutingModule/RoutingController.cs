@@ -1,7 +1,8 @@
 using Infrastructure.API;
+using Infrastructure.API.Configuration.ServiceDiscovery.Requests;
 using Microsoft.AspNetCore.Mvc;
-using ServiceDiscovery.API.Modules.RoutingModule.DTO;
-using ServiceDiscovery.API.Logic.ServicesModule;
+using ServiceDiscovery.Logic.ServicesModule;
+using ServiceDiscovery.Models.Requests;
 
 namespace ServiceDiscovery.API.Modules.RoutingModule;
 

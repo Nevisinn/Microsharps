@@ -1,13 +1,13 @@
+using Infrastructure.API.Configuration.ServiceDiscovery.Requests;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ServiceDiscovery.API.Modules.RoutingModule.DTO;
 
-namespace Infrastructure.API.Configuration.Application;
+namespace Infrastructure.API.Configuration.ServiceDiscovery;
 
 public static class ServiceDiscoveryHostApplicationConfiguration
 {
-    public static void ConfigureServiceDiscoveryLifetime(this WebApplication app)
+    public static void RegisterInServiceDiscovery(this WebApplication app)
     {
         app.Lifetime.ApplicationStarted.Register(() =>
         {

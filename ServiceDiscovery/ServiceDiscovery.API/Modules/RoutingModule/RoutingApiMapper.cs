@@ -1,16 +1,17 @@
-using ServiceDiscovery.API.Logic.ServicesModule.DTO;
-using ServiceDiscovery.API.Logic.ServicesModule.Models;
-using ServiceDiscovery.API.Modules.RoutingModule.DTO;
-using ServiceDiscovery.API.Modules.RoutingModule.Models;
-using RegisterServiceRequest = ServiceDiscovery.API.Logic.ServicesModule.DTO.RegisterServiceRequest;
-using RegisterServiceResponse = ServiceDiscovery.API.Logic.ServicesModule.DTO.RegisterServiceResponse;
-using RemoveServiceRequest = ServiceDiscovery.API.Logic.ServicesModule.DTO.RemoveServiceRequest;
+using Infrastructure.API.Configuration.ServiceDiscovery.Requests;
+using ServiceDiscovery.Logic.ServicesModule.DTO;
+using ServiceDiscovery.Logic.ServicesModule.Models;
+using ServiceDiscovery.Models.Models;
+using ServiceDiscovery.Models.Requests;
+using RegisterServiceRequest = ServiceDiscovery.Logic.ServicesModule.DTO.RegisterServiceRequest;
+using RegisterServiceResponse = ServiceDiscovery.Logic.ServicesModule.DTO.RegisterServiceResponse;
+using RemoveServiceRequest = ServiceDiscovery.Logic.ServicesModule.DTO.RemoveServiceRequest;
 
 namespace ServiceDiscovery.API.Modules.RoutingModule;
 
 public static class RoutingApiMapper
 {
-    public static RegisterServiceRequest Map(DTO.RegisterServiceRequestModel request)
+    public static RegisterServiceRequest Map(RegisterServiceRequestModel request)
         => new()
         {
             ServiceName = request.ServiceName,
@@ -42,7 +43,7 @@ public static class RoutingApiMapper
             Hosts = routingInfo.Hosts,
         };
     
-    public static RemoveServiceRequest Map(DTO.RemoveServiceRequestModel request)
+    public static RemoveServiceRequest Map(RemoveServiceRequestModel request)
         => new()
         {
             ServiceName = request.ServiceName,

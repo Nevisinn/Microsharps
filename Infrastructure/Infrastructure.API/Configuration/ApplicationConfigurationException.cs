@@ -1,4 +1,4 @@
-namespace Infrastructure.API.Configuration.Application;
+namespace Infrastructure.API.Configuration;
 
 public class ApplicationConfigurationException : Exception
 {

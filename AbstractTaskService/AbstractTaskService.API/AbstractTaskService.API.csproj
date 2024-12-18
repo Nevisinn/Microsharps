@@ -18,6 +18,7 @@
       <ProjectReference Include="..\..\Infrastructure\Infrastructure.API\Infrastructure.API.csproj" />
       <ProjectReference Include="..\..\Infrastructure\Infrastructure\Infrastructure.csproj" />
       <ProjectReference Include="..\AbstractTaskService.Logic\AbstractTaskService.Logic.csproj" />
+      <ProjectReference Include="..\AbstractTaskService.Models\AbstractTaskService.Models.csproj" />
     </ItemGroup>
 
 </Project>

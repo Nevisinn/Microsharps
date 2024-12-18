@@ -1,6 +1,6 @@
 using System.Reflection;
-using Infrastructure.API.Configuration.Application;
-using ServiceDiscovery.API.Logic.ServicesModule;
+using Infrastructure.API.Configuration;
+using ServiceDiscovery.Logic.ServicesModule;
 
 var builder = WebApplication.CreateBuilder(args);
 

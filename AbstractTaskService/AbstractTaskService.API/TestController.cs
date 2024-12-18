@@ -1,4 +1,6 @@
 using AbstractTaskService.Logic;
+using AbstractTaskService.Models;
+using AbstractTaskService.Models.Request;
 using Infrastructure.API;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +20,14 @@ public class TestController : ControllerBase
     [HttpGet("Test")]
     public async Task<ActionResult<string>> Test()
     {
-        var response = await abstractTaskService.Test();
+        var response = await abstractTaskService.TestGet();
         return response.ActionResult<string, string>();
+    }
+
+    [HttpPost("TestPost")]
+    public async Task<ActionResult<TestPostResponseModel>> TestPost(TestPostRequestModel request)
+    {
+        var response = await abstractTaskService.TestPost(TestApiMapper.Map(request));
+        return response.ActionResult(TestApiMapper.Map);
     }
 }

@@ -1,6 +1,6 @@
-using ServiceDiscovery.API.Modules.RoutingModule.Models;
+using ServiceDiscovery.Models.Models;
 
-namespace ServiceDiscovery.API.Modules.RoutingModule.DTO;
+namespace ServiceDiscovery.Models.Requests;
 
 public class GetAllServicesHostsResponseModel
 {

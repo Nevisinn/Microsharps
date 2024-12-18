@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 
-namespace Infrastructure.API.Configuration.Application;
+namespace Infrastructure.API.Configuration;
 
 public static class BaseApplicationConfiguration
 {

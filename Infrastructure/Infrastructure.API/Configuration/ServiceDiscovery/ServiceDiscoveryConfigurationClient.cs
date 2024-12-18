@@ -1,7 +1,7 @@
 using System.Net.Http.Json;
-using ServiceDiscovery.API.Modules.RoutingModule.DTO;
+using Infrastructure.API.Configuration.ServiceDiscovery.Requests;
 
-namespace Infrastructure.API.Configuration;
+namespace Infrastructure.API.Configuration.ServiceDiscovery;
 
 public interface IServiceDiscoveryConfigurationClient
 {

@@ -7,8 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Infrastructure\Infrastructue.Client\Infrastructue.Client.csproj" />
+      <ProjectReference Include="..\..\Infrastructure\Infrastructure.Client\Infrastructure.Client.csproj" />
       <ProjectReference Include="..\..\Infrastructure\Infrastructure\Infrastructure.csproj" />
+      <ProjectReference Include="..\AbstractTaskService.Models\AbstractTaskService.Models.csproj" />
     </ItemGroup>
 
 </Project>

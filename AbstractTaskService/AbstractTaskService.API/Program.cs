@@ -1,7 +1,7 @@
 using System.Reflection;
 using AbstractTaskService.Logic;
-using Infrastructure.API.Configuration.Application;
-using Infrastructure.API.Configuration.ApplicationBuilder;
+using Infrastructure.API.Configuration;
+using Infrastructure.API.Configuration.ServiceDiscovery;
 
 const string applicationName = "abstract-task-service";
 
@@ -21,7 +21,7 @@ builder.Services.AddSingleton<IAbstractTaskService, AbstractTaskService.Logic.Ab
 var app = builder.Build();
 
 app.BaseConfiguration(useHttps:false, true);
-app.ConfigureServiceDiscoveryLifetime();
+app.RegisterInServiceDiscovery();
 
 app.Run();
 

@@ -1,4 +1,4 @@
-namespace ServiceDiscovery.API.Modules.RoutingModule.DTO;
+namespace ServiceDiscovery.Models.Requests;
 
 public class GetServiceHostResponseModel
 {

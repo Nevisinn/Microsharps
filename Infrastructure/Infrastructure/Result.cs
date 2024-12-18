@@ -57,6 +57,17 @@ public static class Result
     }
 
 
+    public static Result<T2> ErrorFrom<T, T2>(Result<T> source)
+    {
+        if (source.IsSuccess)
+            throw new ArgumentException("source Result should be unsuccessful");
+        
+        return new Result<T2>(source.Error, source.StatusCode);
+    }
+
+    public static Result<T> ErrorFromHttp<T>(Result<HttpResponseMessage> source)
+        => ErrorFrom<HttpResponseMessage, T>(source);
+    
     public static Result<T> ErrorFromHttp<T>(HttpResponseMessage response)
     {
         var errorMessage = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();

@@ -1,7 +1,7 @@
 using System.Reflection;
 using AbstractTaskService.Client;
 using ApiGateway.Logic;
-using Infrastructure.API.Configuration.Application;
+using Infrastructure.API.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 

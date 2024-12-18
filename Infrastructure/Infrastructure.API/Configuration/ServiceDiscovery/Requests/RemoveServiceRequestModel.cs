@@ -1,4 +1,4 @@
-namespace ServiceDiscovery.API.Modules.RoutingModule.DTO;
+namespace Infrastructure.API.Configuration.ServiceDiscovery.Requests;
 
 public class RemoveServiceRequestModel
 {

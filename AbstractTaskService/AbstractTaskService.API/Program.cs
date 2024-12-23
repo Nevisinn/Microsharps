@@ -1,7 +1,9 @@
 using System.Reflection;
 using AbstractTaskService.Logic;
+using AbstractTaskService.Logic.Repositories;
 using Infrastructure.API.Configuration;
 using Infrastructure.API.Configuration.ServiceDiscovery;
+using Microsoft.EntityFrameworkCore;
 
 const string applicationName = "abstract-task-service";
 
@@ -16,7 +18,10 @@ builder.Services.AddSwaggerGen(opt =>
 });
 
 builder.Services.RegisterServiceDiscovery(applicationName);
-builder.Services.AddSingleton<IAbstractTaskService, AbstractTaskService.Logic.AbstractTaskService>();
+builder.Services.AddDbContext<AbstractTaskDbContext>(options
+    => options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")));
+builder.Services.AddScoped<IAbstractTaskService, AbstractTaskService.Logic.AbstractTaskService>();
+builder.Services.AddScoped<IAbstractTaskRepository, AbstractTaskRepository>();
 
 var app = builder.Build();
 

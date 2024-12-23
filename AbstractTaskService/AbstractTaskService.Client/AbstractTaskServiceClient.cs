@@ -7,8 +7,8 @@ namespace AbstractTaskService.Client;
 
 public interface IAbstractTaskServiceClient
 {
-    Task<Result<string>> TestGet();
-    Task<Result<TestPostResponseModel>> TestPost(TestPostRequestModel request);
+    /*Task<Result<string>> TestGet();
+    Task<Result<TestPostResponseModel>> TestPost(TestPostRequestModel request);*/
 }
 
 public class AbstractTaskServiceClient : IAbstractTaskServiceClient
@@ -21,7 +21,7 @@ public class AbstractTaskServiceClient : IAbstractTaskServiceClient
         sdClient = new ServiceDiscoveryClient(serviceName, null, "http"); // TODO: config
     }
     
-    public async Task<Result<string>> TestGet()
+    /*public async Task<Result<string>> TestGet()
     {
         var response = await sdClient.GetAsync("api/Test/Test");
         if (!response.IsSuccess)
@@ -38,5 +38,5 @@ public class AbstractTaskServiceClient : IAbstractTaskServiceClient
 
         var responseModel = await response.Value.Content.FromJsonOrThrow<TestPostResponseModel>();
         return Result.Ok(responseModel);
-    }
+    }*/
 }

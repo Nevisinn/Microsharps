@@ -7,7 +7,7 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-LoggingConfiguration.ConfigureLogging("ApiGateway");
+LoggingConfiguration.ConfigureLogging(builder.Configuration);
 builder.Host.UseSerilog();
 
 builder.Services.AddEndpointsApiExplorer();

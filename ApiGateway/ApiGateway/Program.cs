@@ -1,7 +1,6 @@
 using System.Reflection;
 using AbstractTaskService.Client;
 using ApiGateway.Logic;
-using ApiGateway.Modules.LogsModule;
 using Infrastructure;
 using Infrastructure.API.Configuration;
 using Serilog;

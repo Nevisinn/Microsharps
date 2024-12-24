@@ -1,8 +1,6 @@
 using System.Text;
-using Infrastructure;
-using Microsoft.AspNetCore.Mvc;
 
-namespace ApiGateway.Modules.LogsModule;
+namespace Infrastructure;
 
 public interface ILogsService
 {

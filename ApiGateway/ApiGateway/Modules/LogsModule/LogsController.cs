@@ -9,10 +9,12 @@ namespace ApiGateway.Modules.LogsModule;
 public class LogsController: ControllerBase
 {
     private readonly ILogsService _logsService;
+    private readonly ILogger<TestController> _logger;
     
-    public LogsController(ILogsService logsService)
+    public LogsController(ILogsService logsService, ILogger<TestController> logger)
     {
         _logsService = logsService;
+        _logger = logger;
     }
     /// <summary>
     /// Current day logs 
@@ -32,5 +34,11 @@ public class LogsController: ControllerBase
             return BadRequest("Incorrect date format. Should be yyyy.MM.dd");
         
         return (await _logsService.ReadLogAsync(dateOnly)).ActionResult();
+    }
+    
+    [HttpPost("CreateTestLog")]
+    public void CreateTestLog()
+    {
+        _logger.LogWarning("Test Warning");
     }
 }

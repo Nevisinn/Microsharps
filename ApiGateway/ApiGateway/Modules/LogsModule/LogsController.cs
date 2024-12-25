@@ -26,7 +26,7 @@ public class LogsController: ControllerBase
     /// <summary>
     /// Logs for the specified date
     /// </summary>
-    /// <param name="date">Date in yyyy-MM-dd format</param>
+    /// <param name="date">Date in yyyy.MM.dd format</param>
     [HttpGet(@"{date:regex([[\d*]])}")]
     public async Task<ActionResult<string>> GetLogs([FromRoute] string date)
     {

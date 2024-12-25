@@ -40,6 +40,14 @@ public static class LoggingConfiguration
                     restrictedToMinimumLevel: LogEventLevel.Information,
                     outputTemplate: "{Timestamp:HH:mm:ss} [{Level}] {Service}: {Message}{NewLine}{Exception}"
                 )
+            .WriteTo.Elasticsearch(
+                    nodeUris: "http://localhost:9200",
+                    autoRegisterTemplate: true,
+                    indexFormat: serviceName + "Logs-{0:yyyy.MM.dd}",
+                    inlineFields: true,
+                    numberOfReplicas: 2,
+                    numberOfShards: 2
+                )
                 .Enrich.FromLogContext()
                 .Enrich.WithProperty("Service", serviceName)
                 .CreateLogger();

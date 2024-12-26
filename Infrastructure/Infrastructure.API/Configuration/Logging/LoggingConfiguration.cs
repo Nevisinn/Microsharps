@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
 
-namespace Infrastructure;
+namespace Infrastructure.API.Configuration.Logging;
 
 public static class LoggingConfiguration
 {

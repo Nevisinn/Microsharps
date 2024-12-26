@@ -1,12 +1,30 @@
+using Infrastructure.API.Configuration.ServiceDiscovery;
 using Infrastructure.API.Configuration.ServiceDiscovery.Requests;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.API.Configuration.ServiceDiscovery;
+namespace Infrastructure.API.Configuration.Builder;
 
-public static class ServiceDiscoveryHostApplicationConfiguration
+public static class ServiceDiscoveryHostRegistration
 {
+    public static void RegisterServiceDiscovery(this IServiceCollection services, string serviceName)
+    {
+        services.AddSingleton<IServiceDiscoveryConfigurationClient, ServiceDiscoveryConfigurationClient>(
+            s =>
+            {
+                var hosts = s.GetService<IServer>()!.Features.Get<IServerAddressesFeature>()!.Addresses;
+                
+                return new ServiceDiscoveryConfigurationClient(
+                    hosts,
+                    serviceName,
+                    null,
+                    null);
+            });
+    }
+    
     public static void RegisterInServiceDiscovery(this WebApplication app)
     {
         app.Lifetime.ApplicationStarted.Register(() =>

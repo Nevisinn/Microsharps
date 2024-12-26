@@ -23,12 +23,12 @@ public class ServiceDiscoveryConfigurationClient : IServiceDiscoveryConfiguratio
         IEnumerable<string> hosts,
         string serviceName, 
         string? serviceDiscoveryHost,
-        string scheme = "http")
+        string? scheme)
     {
         this.hosts = hosts.Select(ToIpAddress).ToArray();
         this.serviceName = serviceName;
         this.serviceDiscoveryHost = serviceDiscoveryHost ?? "localhost:8888";
-        this.scheme = scheme;
+        this.scheme = scheme ?? "http";
     }
     
     public async Task<Result<RegisterServiceResponseModel>> Register()

@@ -10,12 +10,10 @@ namespace ApiGateway;
 public class TestController : ControllerBase
 {
     private readonly ITestService testService;
-    private readonly ILogger<TestController> _logger;
 
-    public TestController(ITestService testService, ILogger<TestController> logger)
+    public TestController(ITestService testService)
     {
         this.testService = testService;
-        this._logger = logger;
     }
 
     [HttpGet("Test")]

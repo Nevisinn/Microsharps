@@ -1,23 +1,20 @@
-using System.Reflection;
-using Infrastructure.API.Configuration;
+using Infrastructure.API.Configuration.Builder;
 using ServiceDiscovery.Logic.ServicesModule;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = MicrosharpsWebAppBuilder.Create(false, args)
+    .BaseConfiguration(
+        isPrivateHosted: true
+    )
+    .ConfigureDi(ConfigureDi);
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddControllers();
-builder.Services.AddSwaggerGen(opt => 
+builder.BuildAndRun();
+
+
+void ConfigureDi(IServiceCollection services)
 {
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-});
-
-builder.Services.AddSingleton<IRoutingService, RoutingService>(_ => new RoutingService(TimeSpan.FromSeconds(10))); // TODO: Config
-
-var app = builder.Build();
-
-app.BaseConfiguration(
-    useHttps: false,
-    isPrivateHosted: true);
-
-app.Run();
+    services.AddSingleton<IRoutingService, RoutingService>(s =>
+    {
+        var logger = s.GetRequiredService<ILogger<RoutingService>>();
+        return new RoutingService(logger, TimeSpan.FromSeconds(10));
+    });
+}

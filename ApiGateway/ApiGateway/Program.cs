@@ -1,8 +1,8 @@
 using System.Reflection;
 using AbstractTaskService.Client;
 using ApiGateway.Logic;
-using Infrastructure;
 using Infrastructure.API.Configuration;
+using Infrastructure.API.Configuration.Logging;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);

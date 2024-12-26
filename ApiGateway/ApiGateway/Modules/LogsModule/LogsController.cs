@@ -1,5 +1,5 @@
-using Infrastructure;
 using Infrastructure.API;
+using Infrastructure.API.Configuration.Logging;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiGateway.Modules.LogsModule;

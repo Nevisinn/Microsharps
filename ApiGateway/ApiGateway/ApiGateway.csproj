@@ -17,7 +17,6 @@
     <ItemGroup>
       <ProjectReference Include="..\..\AbstractTaskService\AbstractTaskService.Client\AbstractTaskService.Client.csproj" />
       <ProjectReference Include="..\..\Infrastructure\Infrastructure.API\Infrastructure.API.csproj" />
-      <ProjectReference Include="..\..\Infrastructure\Infrastructure\Infrastructure.csproj" />
       <ProjectReference Include="..\ApiGateway.Logic\ApiGateway.Logic.csproj" />
       <ProjectReference Include="..\ApiGateway.Models\ApiGateway.Models.csproj" />
     </ItemGroup>

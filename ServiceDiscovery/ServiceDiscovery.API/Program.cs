@@ -1,10 +1,13 @@
 using Infrastructure.API.Configuration.Builder;
 using ServiceDiscovery.Logic.ServicesModule;
 
-var builder = MicrosharpsWebAppBuilder.Create(false, args)
+const string serviceName = "service-discovery";
+
+var builder = MicrosharpsWebAppBuilder.Create(serviceName, false, args)
     .BaseConfiguration(
         isPrivateHosted: true
     )
+    .UseLogging(true)
     .ConfigureDi(ConfigureDi);
 
 builder.BuildAndRun();

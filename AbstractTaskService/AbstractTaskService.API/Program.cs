@@ -3,10 +3,11 @@ using Infrastructure.API.Configuration.Builder;
 
 const string serviceName = "abstract-task-service";
 
-var builder = MicrosharpsWebAppBuilder.Create(false, args)
+var builder = MicrosharpsWebAppBuilder.Create(serviceName, false, args)
     .BaseConfiguration(isPrivateHosted: true)
+    .UseLogging(true)
     .ConfigureDi(ConfigureDi)
-    .RegisterInServiceDiscovery(serviceName);
+    .RegisterInServiceDiscovery();
 
 builder.BuildAndRun();
 

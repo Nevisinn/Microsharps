@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using Serilog.Configuration;
-using Serilog.Events;
 
 namespace Infrastructure.API.Configuration.Logging;
 
@@ -35,7 +33,10 @@ public static class LoggingConfiguration
         if (logSinks.Contains(LogSink.Elastic))
             configuration.ConfigureElastic(serviceName, elasticsearchHost);
 
-        Log.Logger = configuration.CreateLogger();
+        Log.Logger = configuration
+            .Enrich.FromLogContext()
+            .Enrich.WithProperty("Service", serviceName)
+            .CreateLogger();
         builder.Services.AddSerilog();
     }
 

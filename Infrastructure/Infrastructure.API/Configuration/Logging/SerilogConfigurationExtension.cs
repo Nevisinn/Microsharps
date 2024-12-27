@@ -5,7 +5,7 @@ namespace Infrastructure.API.Configuration.Logging;
 
 public static class SerilogConfigurationExtension
 {
-    private const string LogDefaultTemplate = "{Timestamp:HH:mm:ss} [{Level}] {Service}: {Message}{NewLine}{Exception}";
+    private const string LogDefaultTemplate = "{Timestamp:HH:mm:ss} [{Level}] [{Service}]: {Message}{NewLine}{Exception}";
 
     
     public static LoggerConfiguration ConfigureConsole(this LoggerConfiguration configuration)

@@ -10,7 +10,7 @@ namespace Infrastructure.API.Configuration.Builder;
 
 public static class ServiceDiscoveryHostRegistration
 {
-    public static void RegisterServiceDiscovery(this IServiceCollection services, string serviceName)
+    public static void RegisterServiceDiscoveryConfigurationClient(this IServiceCollection services, string serviceName)
     {
         services.AddSingleton<IServiceDiscoveryConfigurationClient, ServiceDiscoveryConfigurationClient>(
             s =>

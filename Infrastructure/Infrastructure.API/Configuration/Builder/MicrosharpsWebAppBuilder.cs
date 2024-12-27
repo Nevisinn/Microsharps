@@ -1,6 +1,8 @@
 using System.Reflection;
+using Infrastructure.API.Configuration.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace Infrastructure.API.Configuration.Builder;
 
@@ -9,21 +11,24 @@ namespace Infrastructure.API.Configuration.Builder;
 /// </summary>
 public class MicrosharpsWebAppBuilder
 {
+    private readonly string serviceName;
     private readonly WebApplicationBuilder builder;
-    private readonly List<Action<WebApplication>> appConfigs;
+    private readonly WebApplicationConfig appConfig;
 
     /// <summary>
     /// Создаёт инстанс билдера
     /// </summary>
+    /// <param name="serviceName">Название сервиса</param>
     /// <param name="isStrictBuild">Нужно ли проверять корректность конфигурации</param>
     /// <param name="args"></param>
-    public static MicrosharpsWebAppBuilder Create(bool isStrictBuild, string[] args)
-        => new(isStrictBuild, args);
+    public static MicrosharpsWebAppBuilder Create(string serviceName, bool isStrictBuild, string[] args)
+        => new(serviceName, isStrictBuild, args);
     
-    private MicrosharpsWebAppBuilder(bool isStrictBuild, string[] args)
+    private MicrosharpsWebAppBuilder(string serviceName, bool isStrictBuild, string[] args)
     {
+        this.serviceName = serviceName;
         builder = WebApplication.CreateBuilder(args);
-        appConfigs = new List<Action<WebApplication>>();
+        appConfig = new();
     }
 
     public MicrosharpsWebAppBuilder BaseConfiguration(bool isPrivateHosted)
@@ -31,16 +36,17 @@ public class MicrosharpsWebAppBuilder
         builder.Services.AddEndpointsApiExplorer();
         UseControllers();
         UseSwagger();
-        appConfigs.Add(app =>
+        UseLogging(true, LogSinks.OnlyLocal);
+        appConfig.Add(app =>
         {
             app.UseAuthentication();
             app.UseAuthorization();
         });
         
         if (isPrivateHosted)
-            appConfigs.Add(app => app.UseCors(opt => opt.AllowAll()));
+            appConfig.Add(app => app.UseCors(opt => opt.AllowAll()));
         else
-            appConfigs.Add(app => app.UseHttpsRedirection());
+            appConfig.Add(app => app.UseHttpsRedirection());
         
 
         return this;
@@ -49,7 +55,7 @@ public class MicrosharpsWebAppBuilder
     public MicrosharpsWebAppBuilder UseControllers()
     {
         builder.Services.AddControllers();
-        appConfigs.Add(app => app.MapControllers());
+        appConfig.Add(app => app.MapControllers());
 
         return this;
     }
@@ -62,7 +68,7 @@ public class MicrosharpsWebAppBuilder
             opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });
         
-        appConfigs.Add(app =>
+        appConfig.Add(app =>
         {
             // if (app.Environment.IsDevelopment()) TODO
             {
@@ -74,13 +80,26 @@ public class MicrosharpsWebAppBuilder
         return this;
     }
 
+    public MicrosharpsWebAppBuilder UseLogging(
+        bool withEndpoints, 
+        LogSink[]? customLogSinks = null)
+    {
+        builder.ConfigureSerilog(serviceName, customLogSinks ?? LogSinks.All);
+        appConfig.Add(app => app.UseSerilogRequestLogging());
+        if (withEndpoints)
+        {
+            builder.Services.AddSingleton<ILogsService, LogsService>();
+            appConfig.Add(app => app.MapLoggingEndpoints());
+        }
+        return this;
+    }
+
     public MicrosharpsWebAppBuilder RegisterInServiceDiscovery(
-        string serviceName, 
         string? serviceDiscoveryHost = null,
         string? scheme = null)
     {
-        builder.Services.RegisterServiceDiscovery(serviceName);
-        appConfigs.Add(app => app.RegisterInServiceDiscovery());
+        builder.Services.RegisterServiceDiscoveryConfigurationClient(serviceName);
+        appConfig.Add(app => app.RegisterInServiceDiscovery());
         
         return this;
     }
@@ -95,10 +114,7 @@ public class MicrosharpsWebAppBuilder
     public void BuildAndRun()
     {
         var app = builder.Build();
-        foreach (var appConfig in appConfigs)
-        {
-            appConfig(app);
-        }
+        appConfig.Apply(app);
         
         app.Run();
     }

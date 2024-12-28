@@ -11,13 +11,7 @@ public class AbstractTaskRepository : IAbstractTaskRepository
         this.context = context;
     }
 
-    public async Task AddAsync(AbstractTask task)
-    {
-        await context.AbstractTasks.AddAsync(task);
-        await context.SaveChangesAsync();
-    }
-
-    public async Task<AbstractTask?> GetTask(Guid id) //TODO: переделать в polling
+    public async Task<AbstractTask?> GetTask(Guid id)
         => await context.AbstractTasks.FindAsync(id); 
 
 }

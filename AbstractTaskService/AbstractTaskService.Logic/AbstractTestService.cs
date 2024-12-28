@@ -6,6 +6,7 @@ using AbstractTaskService.Logic.Repositories;
 using AbstractTaskService.Logic.Requests;
 using AbstractTaskService.Logic.Response;
 using Infrastructure;
+using Microsoft.Extensions.Caching.Distributed;
 using RabbitMQ.Client;
 
 namespace AbstractTaskService.Logic;
@@ -19,19 +20,29 @@ public interface IAbstractTaskService
 
 public class AbstractTaskService : IAbstractTaskService
 {
-    private IAbstractTaskRepository repository;
-    private MessageSender sender;
+    private readonly IAbstractTaskRepository repository;
+    private readonly MessageSender sender;
+    private readonly IDistributedCache cache;
 
-    public AbstractTaskService(IAbstractTaskRepository repository)
+    public AbstractTaskService(IAbstractTaskRepository repository, IDistributedCache cache)
     {
         this.repository = repository;
         sender = new MessageSender();
+        this.cache = cache;
 
     }
     public async Task<Result<GetTaskResponse>> GetTask(GetTaskRequest request)
-    {
-        var task = await repository.GetTask(request.Id);
-
+    {   
+        AbstractTask? task = null;
+        var taskBody = await cache.GetAsync(request.Id.ToString());
+        if (taskBody != null)
+        {
+            using var memoryStream = new MemoryStream(taskBody);
+            task = await JsonSerializer.DeserializeAsync<AbstractTask>(memoryStream);
+        }
+        else
+            task = await repository.GetTask(request.Id);
+        
         if (task is null)
             return Result.NotFound<GetTaskResponse>($"Task with {request.Id} id not found");
         
@@ -51,7 +62,6 @@ public class AbstractTaskService : IAbstractTaskService
             TTLInMillisecond = request.TTLInMillisecond,
             Status = "InProgress"
         };
-        await repository.AddAsync(task);
         await sender.SendMessage(task);
         
         return Result.Ok(new AddTaskResponse { Id = task.Id} );

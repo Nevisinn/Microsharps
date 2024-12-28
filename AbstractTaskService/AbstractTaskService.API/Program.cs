@@ -17,6 +17,10 @@ builder.Services.AddSwaggerGen(opt =>
     opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
+builder.Services.AddStackExchangeRedisCache(options => {
+    options.Configuration = "localhost";
+    options.InstanceName = "local";
+});
 builder.Services.RegisterServiceDiscovery(applicationName);
 builder.Services.AddDbContext<AbstractTaskDbContext>(options
     => options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")));

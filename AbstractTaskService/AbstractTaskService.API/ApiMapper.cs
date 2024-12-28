@@ -11,25 +11,6 @@ namespace AbstractTaskService.API;
 
 public static class ApiMapper
 {
-    /*public static TestPostRequest Map(TestPostRequestModel request)
-        => new()
-        {
-            Name = request.Name,
-            Description = request.Description,
-        };
-    
-    public static TestPostResponseModel Map(TestPostResponse response)
-        => new()
-        {
-            Tasks = response.Tasks.Select(Map).ToArray(),
-        };*/
-    
-    private static AbstractTaskModel Map(AbstractTask task)
-        => new()
-        {
-            Description = task.Description,
-        };
-
     public static AddTaskRequest Map(AddTaskRequestModel request)
         => new()
         {
@@ -43,20 +24,31 @@ public static class ApiMapper
             Id = response.Id
         };
 
-    public static GetTaskRequest Map(GetTaskRequestModel request)
+    public static GetTaskRequest Map(Guid id)
         => new()
         {
-            Id = request.Id
+            Id = id
         };
     
     public static GetTaskResponseModel Map(GetTaskResponse response)
         => new()
         {
             Description = response.Description,
-            TTLInMillisecond = response.TTLInMillisecond
+            Status = response.Status
         };
-    
 
+    public static RetryTaskRequest Map(RetryTaskModel request)
+        => new()
+        {
+            Id = request.Id
+        };
+
+    public static RetryTaskResponseModel Map(RetryTaskResponse response)
+        => new()
+        {
+            Id = response.Id,
+            Status = response.Status
+        };
 
 
 }

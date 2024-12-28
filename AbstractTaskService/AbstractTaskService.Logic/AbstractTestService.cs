@@ -12,65 +12,60 @@ namespace AbstractTaskService.Logic;
 
 public interface IAbstractTaskService
 {
-    /*Task<Result<string>> TestGet();
-    Task<Result<TestPostResponse>> TestPost(TestPostRequest request);*/
     Task<Result<GetTaskResponse>> GetTask(GetTaskRequest request);
     Task<Result<AddTaskResponse>> AddTask(AddTaskRequest request);
+    Task<Result<RetryTaskResponse>> RetryTask(RetryTaskRequest request);
 }
 
 public class AbstractTaskService : IAbstractTaskService
 {
     private IAbstractTaskRepository repository;
-    private ConnectionFactory factory;
+    private MessageSender sender;
 
     public AbstractTaskService(IAbstractTaskRepository repository)
     {
         this.repository = repository;
-        factory = new ConnectionFactory { HostName = "localhost" };
-    }
-    
-    /*public async Task<Result<string>> TestGet()
-    {
-        return Result.Ok("Success");
-    }
+        sender = new MessageSender();
 
-    public async Task<Result<TestPostResponse>> TestPost(TestPostRequest request)
-    {
-        tasks.Add(new AbstractTask
-        {
-            Description = request.Description,
-        });
-        return Result.Ok(new TestPostResponse
-        {
-            Tasks = tasks.ToArray(),
-        });
-    }*/
-
+    }
     public async Task<Result<GetTaskResponse>> GetTask(GetTaskRequest request)
-    { 
+    {
+        var task = await repository.GetTask(request.Id);
+
+        if (task is null)
+            return Result.NotFound<GetTaskResponse>($"Task with {request.Id} id not found");
+        
         return Result.Ok(new GetTaskResponse
-            (
-                ));
+        {
+            Description = task.Description,
+            Status = task.Status
+        });
     }
 
     public async Task<Result<AddTaskResponse>> AddTask(AddTaskRequest request)
     {
-        await using var connection = await factory.CreateConnectionAsync();
-        await using var channel = await connection.CreateChannelAsync();
+        var task = new AbstractTask
+        {
+            Id = Guid.NewGuid(),
+            Description = request.Description,
+            TTLInMillisecond = request.TTLInMillisecond,
+            Status = "InProgress"
+        };
+        await repository.AddAsync(task);
+        await sender.SendMessage(task);
         
-        await channel.QueueDeclareAsync(queue: "hello", durable: false, exclusive: false, autoDelete: false,
-            arguments: null);
-        var messageBody = await SerializeToJsonAsync(request);
-        await channel.BasicPublishAsync(exchange: string.Empty, routingKey: "hello", body: messageBody);
-        
-        
-        return Result.Ok(new AddTaskResponse());
+        return Result.Ok(new AddTaskResponse { Id = task.Id} );
     }
-    
-    private async Task<byte[]> SerializeToJsonAsync<T>(T obj)
+
+    public async Task<Result<RetryTaskResponse>> RetryTask(RetryTaskRequest request)
     {
-        using var memoryStream = new MemoryStream();
-        await JsonSerializer.SerializeAsync(memoryStream, obj);
-        return memoryStream.ToArray();
+        var task = await repository.GetTask(request.Id);
+        
+        if (task is null)
+            return Result.NotFound<RetryTaskResponse>($"Task with {request.Id} id not found");
+        
+        await sender.SendMessage(task);
+
+        return Result.Ok(new RetryTaskResponse { Id = task.Id, Status = "InProgress" });
     }
 }

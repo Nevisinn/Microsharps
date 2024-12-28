@@ -20,24 +20,10 @@ public class TaskController : ControllerBase
         this.abstractTaskService = abstractTaskService;
     }
 
-    /*[HttpGet("Test")]
-    public async Task<ActionResult<string>> Test()
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<GetTaskResponseModel>> GetTask(Guid id)
     {
-        var response = await abstractTaskService.TestGet();
-        return response.ActionResult<string, string>();
-    }
-
-    [HttpPost("TestPost")]
-    public async Task<ActionResult<TestPostResponseModel>> TestPost(TestPostRequestModel request)
-    {
-        var response = await abstractTaskService.TestPost(ApiMapper.Map(request));
-        return response.ActionResult(ApiMapper.Map);
-    }*/
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<GetTaskResponseModel>> GetTask(GetTaskRequestModel request)
-    {
-        var response = await abstractTaskService.GetTask(ApiMapper.Map(request));
+        var response = await abstractTaskService.GetTask(ApiMapper.Map(id));
         return response.ActionResult(ApiMapper.Map);
     }
     
@@ -45,6 +31,13 @@ public class TaskController : ControllerBase
     public async Task<ActionResult<AddTaskResponseModel>> AddTask(AddTaskRequestModel request)
     {
         var response = await abstractTaskService.AddTask(ApiMapper.Map(request));
+        return response.ActionResult(ApiMapper.Map);
+    }
+    
+    [HttpPost("RetryTask")]
+    public async Task<ActionResult<RetryTaskResponseModel>> RetryTask(RetryTaskModel request)
+    {
+        var response = await abstractTaskService.RetryTask(ApiMapper.Map(request));
         return response.ActionResult(ApiMapper.Map);
     }
     

@@ -1,5 +1,6 @@
 using System.Net;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Infrastructure.API;
@@ -35,6 +36,22 @@ public static class ResultExtensions
             HttpStatusCode.NoContent => new NoContentResult(),
             HttpStatusCode.BadRequest => new BadRequestObjectResult(error),
             HttpStatusCode.NotFound => new NotFoundObjectResult(error),
+            _ => throw new ArgumentException($"Result does not support {statusCode}")
+        };
+    }
+
+    public static IResult MinimalApiResult<T>(this Result<T> result)
+    {
+        var (error, statusCode, value) = result;
+
+        return statusCode switch
+        {
+            HttpStatusCode.OK => typeof(T) == typeof(string) 
+                ? Results.Text(value!.ToString())
+                : Results.Ok(value),
+            HttpStatusCode.NoContent => Results.NoContent(),
+            HttpStatusCode.BadRequest => Results.BadRequest(error),
+            HttpStatusCode.NotFound => Results.NotFound(error),
             _ => throw new ArgumentException($"Result does not support {statusCode}")
         };
     }

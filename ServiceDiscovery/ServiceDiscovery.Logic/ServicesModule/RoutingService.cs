@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 using Infrastructure;
+using Microsoft.Extensions.Logging;
 using ServiceDiscovery.Logic.ServicesModule.DTO;
 using ServiceDiscovery.Logic.ServicesModule.Models;
 
@@ -17,11 +18,13 @@ public interface IRoutingService
 
 public class RoutingService : IRoutingService
 {
+    private readonly ILogger<RoutingService> logger;
     private readonly ConcurrentDictionary<string, List<IPEndPoint>> hostsByService; // TODO: Add ThreadSafeList
     private readonly Random random;
 
-    public RoutingService(TimeSpan healthCheckingDelay) // TODO: logger
+    public RoutingService(ILogger<RoutingService> logger, TimeSpan healthCheckingDelay) // TODO: logger
     {
+        this.logger = logger;
         hostsByService = new ConcurrentDictionary<string, List<IPEndPoint>>();
         random = new Random();
         StartHealthPing(healthCheckingDelay, new CancellationToken());
@@ -37,6 +40,7 @@ public class RoutingService : IRoutingService
                 lock (existedHosts)
                 {
                     existedHosts.Add(newHost);
+                    logger.LogInformation($"Registered service: {request.ServiceName} with host: {newHost}");
                 }
             }
             else
@@ -102,18 +106,13 @@ public class RoutingService : IRoutingService
                 var hosts = serviceWithHosts.Value;
                 foreach (var host in hosts)
                 {
-                    var isSuccessConnected = await TryPing(host);
-                    if (!isSuccessConnected)
+                    var connectionResult = await TryPing(host);
+                    if (connectionResult.IsSuccess) continue;
+                    
+                    logger.LogWarning($"Can not connect to host: {host}. It will be removed.{Environment.NewLine}Error: {connectionResult.Error}");
+                    lock (hosts)
                     {
-                        Console.WriteLine($"Can not connect to host: {host}. It will be removed");
-                        lock (hosts)
-                        {
-                            hosts.Remove(host);
-                        }
-                    }
-                    else // TODO: remove
-                    {
-                        Console.WriteLine($"Success connection with host: {host}.");
+                        hosts.Remove(host);
                     }
                 }
             }
@@ -127,20 +126,20 @@ public class RoutingService : IRoutingService
         }
     }
 
-    private async Task<bool> TryPing(IPEndPoint host)
+    private async Task<EmptyResult> TryPing(IPEndPoint host)
     {
         try
         {
             using var tcpClient = new TcpClient();
             await tcpClient.ConnectAsync(host);
             if (!tcpClient.Connected)
-                return false;
-            return true;
+                return EmptyResult.BadRequest("Can not establish connection with host");
+            
+            return EmptyResult.Success();
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message + Environment.NewLine + e.StackTrace);
-            return false;
+            return EmptyResult.BadRequest(e.Message + Environment.NewLine + e.StackTrace);
         }
     }
 }

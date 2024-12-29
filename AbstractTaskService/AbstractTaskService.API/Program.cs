@@ -1,27 +1,18 @@
-using System.Reflection;
 using AbstractTaskService.Logic;
-using Infrastructure.API.Configuration;
-using Infrastructure.API.Configuration.ServiceDiscovery;
+using Infrastructure.API.Configuration.Builder;
 
-const string applicationName = "abstract-task-service";
+const string serviceName = "abstract-task-service";
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = MicrosharpsWebAppBuilder.Create(serviceName, false, args)
+    .BaseConfiguration(isPrivateHosted: true)
+    .UseLogging(true)
+    .ConfigureDi(ConfigureDi)
+    .RegisterInServiceDiscovery();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddControllers();
-builder.Services.AddSwaggerGen(opt => 
+builder.BuildAndRun();
+
+
+void ConfigureDi(IServiceCollection services)
 {
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-});
-
-builder.Services.RegisterServiceDiscovery(applicationName);
-builder.Services.AddSingleton<IAbstractTaskService, AbstractTaskService.Logic.AbstractTaskService>();
-
-var app = builder.Build();
-
-app.BaseConfiguration(useHttps:false, true);
-app.RegisterInServiceDiscovery();
-
-app.Run();
-
+    services.AddSingleton<IAbstractTaskService, AbstractTaskService.Logic.AbstractTaskService>();
+}

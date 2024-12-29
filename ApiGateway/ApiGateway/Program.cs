@@ -1,31 +1,20 @@
-using System.Reflection;
 using AbstractTaskService.Client;
 using ApiGateway.Logic;
-using Infrastructure;
-using Infrastructure.API.Configuration;
-using Serilog;
+using Infrastructure.API.Configuration.Builder;
 
-var builder = WebApplication.CreateBuilder(args);
+const string serviceName = "api-gateway";
 
-LoggingConfiguration.ConfigureLogging(builder.Configuration);
-builder.Host.UseSerilog();
+var builder = MicrosharpsWebAppBuilder.Create(serviceName, false, args)
+    .BaseConfiguration(
+        isPrivateHosted: false
+    )
+    .UseLogging(true)
+    .ConfigureDi(ConfigureDi);
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddControllers();
-builder.Services.AddSwaggerGen(opt => 
+builder.BuildAndRun();
+
+void ConfigureDi(IServiceCollection services)
 {
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-});
-builder.Services.AddScoped<ILogsService, LogsService>();
-builder.Services.AddSingleton<ITestService, TestService>();
-builder.Services.AddSingleton<IAbstractTaskServiceClient, AbstractTaskServiceClient>(); // TODO:  add DI to Logic and move into it  
-
-var app = builder.Build();
-
-app.BaseConfiguration(
-    useHttps: false,
-    isPrivateHosted: false
-);
-
-app.Run();
+    services.AddSingleton<ITestService, TestService>();
+    services.AddSingleton<IAbstractTaskServiceClient, AbstractTaskServiceClient>(); // TODO:  add DI to Logic and move into it  
+}

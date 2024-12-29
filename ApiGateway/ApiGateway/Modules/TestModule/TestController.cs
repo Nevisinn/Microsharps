@@ -3,7 +3,7 @@ using ApiGateway.Models.Requests;
 using Infrastructure.API;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiGateway;
+namespace ApiGateway.Modules.TestModule;
 
 [Route("api/[controller]")]
 [ApiController]

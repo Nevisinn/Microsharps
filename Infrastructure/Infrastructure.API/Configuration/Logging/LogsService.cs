@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Infrastructure;
+namespace Infrastructure.API.Configuration.Logging;
 
 public interface ILogsService
 {

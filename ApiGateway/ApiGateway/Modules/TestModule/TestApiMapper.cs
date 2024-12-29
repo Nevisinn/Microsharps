@@ -3,7 +3,7 @@ using ApiGateway.Logic.Requests;
 using ApiGateway.Models.Models;
 using ApiGateway.Models.Requests;
 
-namespace ApiGateway;
+namespace ApiGateway.Modules.TestModule;
 
 public static class TestApiMapper
 {

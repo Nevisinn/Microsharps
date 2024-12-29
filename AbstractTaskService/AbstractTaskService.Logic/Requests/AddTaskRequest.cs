@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using AbstractTaskService.Logic.Models;
 
 namespace AbstractTaskService.Logic.Requests;
 

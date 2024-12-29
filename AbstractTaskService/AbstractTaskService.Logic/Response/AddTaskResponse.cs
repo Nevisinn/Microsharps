@@ -1,5 +1,3 @@
-using AbstractTaskService.Logic.Models;
-
 namespace AbstractTaskService.Logic.Response;
 
 public class AddTaskResponse

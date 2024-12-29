@@ -1,6 +1,7 @@
 using AbstractTaskService.Logic;
 using AbstractTaskService.Logic.Requests;
 using AbstractTaskService.Logic.Response;
+using AbstractTaskService.Logic.Services;
 using AbstractTaskService.Models;
 using AbstractTaskService.Models.Request;
 using AbstractTaskService.Models.Response;
@@ -11,17 +12,17 @@ namespace AbstractTaskService.API;
 
 [Route("api/[controller]")]
 [ApiController]
-public class TaskController : ControllerBase
+public class TasksController : ControllerBase
 {
     private readonly IAbstractTaskService abstractTaskService;
 
-    public TaskController(IAbstractTaskService abstractTaskService)
+    public TasksController(IAbstractTaskService abstractTaskService)
     {
         this.abstractTaskService = abstractTaskService;
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<GetTaskResponseModel>> GetTask(Guid id)
+    public async Task<ActionResult<GetTaskResponseModel>> GetTask([FromRoute] Guid id)
     {
         var response = await abstractTaskService.GetTask(ApiMapper.Map(id));
         return response.ActionResult(ApiMapper.Map);

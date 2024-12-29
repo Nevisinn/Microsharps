@@ -1,11 +1,8 @@
-using System.Text;
 using System.Text.Json;
 using AbstractTaskService.Logic.Models;
-using AbstractTaskService.Logic.Requests;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 
-namespace AbstractTaskService.Logic;
+namespace AbstractTaskService.Logic.Services;
 
 public class MessageSender
 {
@@ -24,11 +21,11 @@ public class MessageSender
         await channel.QueueDeclareAsync(queue: "hello", durable: false, exclusive: false, autoDelete: false,
             arguments: null);
         
-        var messageBody = await SerializeToByteAsync(message);
+        var messageBody = await SerializeToByte(message);
         await channel.BasicPublishAsync(exchange: string.Empty, routingKey: "hello", body: messageBody);
     }
     
-    private async Task<byte[]> SerializeToByteAsync(AbstractTask obj)
+    private async Task<byte[]> SerializeToByte(AbstractTask obj)
     {
         using var memoryStream = new MemoryStream();
         await JsonSerializer.SerializeAsync(memoryStream, obj);

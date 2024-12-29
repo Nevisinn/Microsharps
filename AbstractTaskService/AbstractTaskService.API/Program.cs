@@ -1,6 +1,7 @@
 using System.Reflection;
+using AbstractTaskService.DAL.Repositories;
 using AbstractTaskService.Logic;
-using AbstractTaskService.Logic.Repositories;
+using AbstractTaskService.Logic.Services;
 using Infrastructure.API.Configuration;
 using Infrastructure.API.Configuration.ServiceDiscovery;
 using Microsoft.EntityFrameworkCore;
@@ -19,12 +20,12 @@ builder.Services.AddSwaggerGen(opt =>
 
 builder.Services.AddStackExchangeRedisCache(options => {
     options.Configuration = "localhost";
-    options.InstanceName = "local";
+    options.InstanceName = "redis";
 });
 builder.Services.RegisterServiceDiscovery(applicationName);
-builder.Services.AddDbContext<AbstractTaskDbContext>(options
-    => options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")));
-builder.Services.AddScoped<IAbstractTaskService, AbstractTaskService.Logic.AbstractTaskService>();
+/*builder.Services.AddDbContext<AbstractTaskDbContext>(options
+    => options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")));*/
+builder.Services.AddScoped<IAbstractTaskService, AbstractTaskService.Logic.Services.AbstractTaskService>();
 builder.Services.AddScoped<IAbstractTaskRepository, AbstractTaskRepository>();
 
 var app = builder.Build();

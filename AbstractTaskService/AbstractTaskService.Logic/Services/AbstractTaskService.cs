@@ -1,15 +1,12 @@
 ﻿using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using AbstractTaskService.DAL.Repositories;
 using AbstractTaskService.Logic.Models;
-using AbstractTaskService.Logic.Repositories;
 using AbstractTaskService.Logic.Requests;
 using AbstractTaskService.Logic.Response;
 using Infrastructure;
 using Microsoft.Extensions.Caching.Distributed;
-using RabbitMQ.Client;
 
-namespace AbstractTaskService.Logic;
+namespace AbstractTaskService.Logic.Services;
 
 public interface IAbstractTaskService
 {
@@ -33,12 +30,20 @@ public class AbstractTaskService : IAbstractTaskService
     }
     public async Task<Result<GetTaskResponse>> GetTask(GetTaskRequest request)
     {   
-        AbstractTask? task = null;
-        var taskBody = await cache.GetAsync(request.Id.ToString());
+        AbstractTask? task;
+        var taskBody = await cache.GetAsync($"{request.Id}");
         if (taskBody != null)
         {
-            using var memoryStream = new MemoryStream(taskBody);
-            task = await JsonSerializer.DeserializeAsync<AbstractTask>(memoryStream);
+            var taskString = Encoding.UTF8.GetString(taskBody).Split(",");
+            var description = taskString[0];
+            var ttl = taskString[1];
+            var status = taskString[2];
+            task = new AbstractTask
+            {
+                Description = description,
+                TTLInMilliseconds = int.Parse(ttl),
+                Status = status
+            };
         }
         else
             task = await repository.GetTask(request.Id);
@@ -49,6 +54,7 @@ public class AbstractTaskService : IAbstractTaskService
         return Result.Ok(new GetTaskResponse
         {
             Description = task.Description,
+            TTlInMilliseconds = task.TTLInMilliseconds,
             Status = task.Status
         });
     }
@@ -59,8 +65,8 @@ public class AbstractTaskService : IAbstractTaskService
         {
             Id = Guid.NewGuid(),
             Description = request.Description,
-            TTLInMillisecond = request.TTLInMillisecond,
-            Status = "InProgress"
+            TTLInMilliseconds = request.TTLInMillisecond,
+            Status = "Wait"
         };
         await sender.SendMessage(task);
         

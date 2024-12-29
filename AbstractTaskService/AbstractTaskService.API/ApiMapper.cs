@@ -34,6 +34,7 @@ public static class ApiMapper
         => new()
         {
             Description = response.Description,
+            TTlInMilliseconds = response.TTlInMilliseconds,
             Status = response.Status
         };
 

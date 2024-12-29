@@ -1,10 +1,8 @@
 using AbstractTaskService.Logic.Models;
 
-namespace AbstractTaskService.Logic.Repositories;
+namespace AbstractTaskService.DAL.Repositories;
 
 public interface IAbstractTaskRepository
 {
-
     Task<AbstractTask?> GetTask(Guid id);
-    
 }

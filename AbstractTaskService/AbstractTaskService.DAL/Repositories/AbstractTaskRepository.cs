@@ -1,12 +1,13 @@
+using AbstractTaskService.DAL.Context;
 using AbstractTaskService.Logic.Models;
 
-namespace AbstractTaskService.Logic.Repositories;
+namespace AbstractTaskService.DAL.Repositories;
 
 public class AbstractTaskRepository : IAbstractTaskRepository
 {
     private readonly AbstractTaskDbContext context;
 
-    public AbstractTaskRepository(AbstractTaskDbContext context)
+    internal AbstractTaskRepository(AbstractTaskDbContext context)
     {
         this.context = context;
     }

@@ -1,4 +1,6 @@
 using System.Reflection;
+using AbstractTaskService.DAL;
+using AbstractTaskService.DAL.Context;
 using AbstractTaskService.DAL.Repositories;
 using AbstractTaskService.Logic;
 using AbstractTaskService.Logic.Services;
@@ -24,8 +26,7 @@ void ConfigureDi(IServiceCollection services)
         options.Configuration = "localhost";
         options.InstanceName = "redis";
         });
-    /*builder.Services.AddDbContext<AbstractTaskDbContext>(options
-    => options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")));*/
+    services.AddDbContext("Server=localhost;Database=AbstractTaskService;Port=5432;User Id=postgres;Password=123");
     services.AddScoped<IAbstractTaskService, AbstractTaskService.Logic.Services.AbstractTaskService>();
     services.AddScoped<IAbstractTaskRepository, AbstractTaskRepository>();
 };

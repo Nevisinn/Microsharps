@@ -21,9 +21,9 @@ public class RoutingController : ControllerBase
     /// Регистрирует хост для сервиса
     /// </summary>
     [HttpPost]
-    public ActionResult<RegisterServiceResponseModel> RegisterService([FromBody] RegisterServiceRequestModel request)
+    public async Task<ActionResult<RegisterServiceResponseModel>> RegisterService([FromBody] RegisterServiceRequestModel request)
     {
-        var response = routingService.RegisterHosts(RoutingApiMapper.Map(request));
+        var response = await routingService.RegisterHosts(RoutingApiMapper.Map(request));
         return response.ActionResult(RoutingApiMapper.Map);
     }
 

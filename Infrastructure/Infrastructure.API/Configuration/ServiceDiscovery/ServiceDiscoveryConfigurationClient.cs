@@ -14,21 +14,18 @@ public class ServiceDiscoveryConfigurationClient : IServiceDiscoveryConfiguratio
     private readonly string[] hosts;
     private readonly string serviceDiscoveryHost;
     private readonly string serviceName;
-    private readonly string scheme;
-    private string basePath => $"{scheme}://{serviceDiscoveryHost}/api/Routing";
+    private string BasePath => $"{serviceDiscoveryHost}/api/Routing";
     
-    private static readonly HttpClient httpClient = new();
+    private static readonly HttpClient HttpClient = new();
 
     public ServiceDiscoveryConfigurationClient(
         IEnumerable<string> hosts,
         string serviceName, 
-        string? serviceDiscoveryHost,
-        string? scheme)
+        string? serviceDiscoveryHost)
     {
-        this.hosts = hosts.Select(ToIpAddress).ToArray();
+        this.hosts = hosts.ToArray();
         this.serviceName = serviceName;
-        this.serviceDiscoveryHost = serviceDiscoveryHost ?? "localhost:8888";
-        this.scheme = scheme ?? "http";
+        this.serviceDiscoveryHost = serviceDiscoveryHost ?? "http://localhost:8888";
     }
     
     public async Task<Result<RegisterServiceResponseModel>> Register()
@@ -38,7 +35,7 @@ public class ServiceDiscoveryConfigurationClient : IServiceDiscoveryConfiguratio
             Hosts = hosts,
             ServiceName = serviceName,
         });
-        var response = await httpClient.PostAsync(basePath, content);
+        var response = await HttpClient.PostAsync(BasePath, content);
         if (!response.IsSuccessStatusCode)
             return Result.BadRequest<RegisterServiceResponseModel>(await response.Content.ReadAsStringAsync());
 
@@ -60,9 +57,9 @@ public class ServiceDiscoveryConfigurationClient : IServiceDiscoveryConfiguratio
         {
             Method = HttpMethod.Delete,
             Content = content,
-            RequestUri = new Uri(basePath),
+            RequestUri = new Uri(BasePath),
         };
-        var response = await httpClient.SendAsync(httpRequestMessage);
+        var response = await HttpClient.SendAsync(httpRequestMessage);
         if (!response.IsSuccessStatusCode)
             return EmptyResult.BadRequest(await response.Content.ReadAsStringAsync());
 

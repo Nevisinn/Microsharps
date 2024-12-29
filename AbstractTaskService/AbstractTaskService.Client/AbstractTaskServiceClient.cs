@@ -18,7 +18,7 @@ public class AbstractTaskServiceClient : IAbstractTaskServiceClient
 
     public AbstractTaskServiceClient()
     {
-        sdClient = new ServiceDiscoveryClient(serviceName, null, "http"); // TODO: config
+        sdClient = new ServiceDiscoveryClient(serviceName, null); // TODO: config
     }
     
     public async Task<Result<string>> TestGet()

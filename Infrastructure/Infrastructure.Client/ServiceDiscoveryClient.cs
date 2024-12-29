@@ -20,14 +20,13 @@ public class ServiceDiscoveryClient : IServiceDiscoveryClient
 
     public ServiceDiscoveryClient(
         string serviceName, 
-        string? serviceDiscoveryCustomHost, 
-        string scheme = "http")
+        string? serviceDiscoveryCustomHost = null)
     {
         this.serviceName = serviceName;
-        this.scheme = scheme;
         var serviceDiscoveryHost = serviceDiscoveryCustomHost
-                                   ?? "localhost:8888";
-        this.serviceDiscoveryPath = $"{scheme}://{serviceDiscoveryHost}/api/Routing";
+                                   ?? EnvironmentVars.SdHost
+                                   ?? "http://localhost:8888";
+        this.serviceDiscoveryPath = $"{serviceDiscoveryHost}/api/Routing";
     }
 
     public async Task<Result<HttpResponseMessage>> GetAsync(string? relativePath)
@@ -84,7 +83,7 @@ public class ServiceDiscoveryClient : IServiceDiscoveryClient
             ? relativePath
             : $"/{relativePath}";
 
-        return $"{scheme}://{serviceAddress}{relativePath}";
+        return $"{serviceAddress}{relativePath}";
     }
 
     private async Task<string> ResolveServiceAddress()

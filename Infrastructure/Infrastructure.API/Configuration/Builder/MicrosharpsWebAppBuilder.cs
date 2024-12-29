@@ -1,5 +1,6 @@
 using System.Reflection;
 using Infrastructure.API.Configuration.Logging;
+using Infrastructure.API.Configuration.ServiceDiscovery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -95,11 +96,14 @@ public class MicrosharpsWebAppBuilder
     }
 
     public MicrosharpsWebAppBuilder RegisterInServiceDiscovery(
-        string? serviceDiscoveryHost = null,
-        string? scheme = null)
+        string? ownHost = null,
+        string? serviceDiscoveryHost = null)
     {
-        builder.Services.RegisterServiceDiscoveryConfigurationClient(serviceName);
-        appConfig.Add(app => app.RegisterInServiceDiscovery());
+        ownHost ??= EnvironmentVars.OwhHost;
+        serviceDiscoveryHost ??= EnvironmentVars.SdHost;
+        builder.Services.RegisterServiceDiscoveryConfigurationClient(serviceName, ownHost, serviceDiscoveryHost);
+        appConfig.Add(app => app.MapServiceDiscoveryEndpoints());
+        appConfig.Add(app => app.ConfigureLifetimeInServiceDiscovery());
         
         return this;
     }

@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  sd-api:
+    image: sd-api
+    container_name: sd-api
+    environment:
+      - "ASPNETCORE_ENVIRONMENT=Release"
+    ports:
+      - 8888:8080
+    networks:
+      - my-network
+
+  abstract-task-service:
+    image: abstract-task-service
+    container_name: abstract-task-service
+    environment:
+      - "ASPNETCORE_ENVIRONMENT=Release"
+      - "HOST=http://abstract-task-service:8080"
+      - "SD_HOST=http://sd-api:8080"
+    ports:
+      - 7778:8080
+    depends_on:
+      - sd-api
+    networks:
+      - my-network
+
+  api-gateway:
+    image: api-gateway
+    container_name: api-gateway
+    environment:
+      - "ASPNETCORE_ENVIRONMENT=Release"
+      - "HOST=http://api-gateway:8080"
+      - "SD_HOST=http://sd-api:8080"
+    ports:
+      - 7777:8080
+    depends_on:
+      - sd-api
+    networks:
+      - my-network
+
+
+
+
+volumes:
+  stackup_postgres_data:
+
+networks:
+  my-network:
+    driver: bridge

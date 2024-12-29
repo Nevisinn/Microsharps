@@ -10,7 +10,7 @@ namespace ServiceDiscovery.Logic.ServicesModule;
 
 public interface IRoutingService
 {
-    Result<RegisterServiceResponse> RegisterHosts(RegisterServiceRequest request);
+    Task<Result<RegisterServiceResponse>> RegisterHosts(RegisterServiceRequest request);
     Result<GetServiceHostResponse> GetServiceHost(string serviceName);
     Result<ServiceRoutingInfo[]> GetAllServicesWithHosts();
     EmptyResult RemoveHosts(RemoveServiceRequest request);
@@ -19,24 +19,36 @@ public interface IRoutingService
 public class RoutingService : IRoutingService
 {
     private readonly ILogger<RoutingService> logger;
-    private readonly ConcurrentDictionary<string, List<IPEndPoint>> hostsByService; // TODO: Add ThreadSafeList
+    private readonly ConcurrentDictionary<string, List<string>> hostsByService; // TODO: Add ThreadSafeList
+    private readonly ConcurrentDictionary<string, List<string>> blackListedHostsByService;
     private readonly Random random;
+
+    private static readonly HttpClient HttpClient = new();
+    private const string PingEndpoint = "api/health/ping";
 
     public RoutingService(ILogger<RoutingService> logger, TimeSpan healthCheckingDelay) // TODO: logger
     {
         this.logger = logger;
-        hostsByService = new ConcurrentDictionary<string, List<IPEndPoint>>();
+        hostsByService = new();
+        blackListedHostsByService = new();
         random = new Random();
         StartHealthPing(healthCheckingDelay, new CancellationToken());
     }
 
-    public Result<RegisterServiceResponse> RegisterHosts(RegisterServiceRequest request)
+    public async Task<Result<RegisterServiceResponse>> RegisterHosts(RegisterServiceRequest request)
     {
         var existedHosts = GetHosts(request.ServiceName);
-        foreach (var newHost in request.Hosts.Select(IPEndPoint.Parse))
+        foreach (var newHost in request.Hosts)
         {
             if (!existedHosts.Contains(newHost))
             {
+                var isHostAvailable = await TryPing(newHost);
+                if (!isHostAvailable.IsSuccess)
+                {
+                    logger.LogWarning($"Can not ping new host: {newHost} of service: {request.ServiceName}");
+                    continue;
+                }
+                
                 lock (existedHosts)
                 {
                     existedHosts.Add(newHost);
@@ -45,7 +57,7 @@ public class RoutingService : IRoutingService
             }
             else
             {
-                return Result.BadRequest<RegisterServiceResponse>("Same host already used for this service");
+                return Result.BadRequest<RegisterServiceResponse>($"Same host already used for this service. host: {newHost}");
             }
         }
         
@@ -64,7 +76,7 @@ public class RoutingService : IRoutingService
         var randomHost = hosts[random.Next(hosts.Count)];
         return Result.Ok(new GetServiceHostResponse()
         {
-            Host = randomHost.ToString()
+            Host = randomHost
         });
     }
 
@@ -80,7 +92,7 @@ public class RoutingService : IRoutingService
     public EmptyResult RemoveHosts(RemoveServiceRequest request)
     {
         var hosts = GetHosts(request.ServiceName);
-        foreach (var hostToDel in request.Hosts.Select(IPEndPoint.Parse))
+        foreach (var hostToDel in request.Hosts)
         {
             if (!hosts.Contains(hostToDel))
                 continue;
@@ -94,8 +106,8 @@ public class RoutingService : IRoutingService
         return EmptyResult.Success();
     }
     
-    private List<IPEndPoint> GetHosts(string serviceName) 
-        => hostsByService.GetOrAdd(serviceName, _ => new List<IPEndPoint>());
+    private List<string> GetHosts(string serviceName) 
+        => hostsByService.GetOrAdd(serviceName, _ => new());
 
     private async Task StartHealthPing(TimeSpan healthCheckingDelay, CancellationToken token)
     {
@@ -103,20 +115,37 @@ public class RoutingService : IRoutingService
         {
             foreach (var serviceWithHosts in hostsByService)
             {
+                var serviceName = serviceWithHosts.Key;
                 var hosts = serviceWithHosts.Value;
                 foreach (var host in hosts)
                 {
                     var connectionResult = await TryPing(host);
                     if (connectionResult.IsSuccess) continue;
-                    
+
                     logger.LogWarning($"Can not connect to host: {host}. It will be removed.{Environment.NewLine}Error: {connectionResult.Error}");
-                    lock (hosts)
-                    {
-                        hosts.Remove(host);
-                    }
+                    blackListedHostsByService.AddOrUpdate(
+                        serviceName,
+                        _ => new() { host }, 
+                        (_, list) =>
+                        {
+                            list.Add(host);
+                            return list;
+                        });
                 }
             }
+            if (blackListedHostsByService.Count == 0)
+                return;
             
+            foreach (var toRemove in blackListedHostsByService)
+            {
+                var serviceName = toRemove.Key;
+                var hostsToRemove = toRemove.Value;
+                lock (hostsByService[serviceName])
+                {
+                    hostsByService[serviceName].RemoveAll(host => hostsToRemove.Contains(host));
+                }
+            }
+            blackListedHostsByService.Clear();
         }
 
         while (!token.IsCancellationRequested)
@@ -126,14 +155,13 @@ public class RoutingService : IRoutingService
         }
     }
 
-    private async Task<EmptyResult> TryPing(IPEndPoint host)
+    private async Task<EmptyResult> TryPing(string host)
     {
         try
         {
-            using var tcpClient = new TcpClient();
-            await tcpClient.ConnectAsync(host);
-            if (!tcpClient.Connected)
-                return EmptyResult.BadRequest("Can not establish connection with host");
+            var response = await HttpClient.GetAsync($"{host}/{PingEndpoint}");
+            if (!response.IsSuccessStatusCode)
+                return EmptyResult.BadRequest($"Can not establish connection with host. Error code: {response.StatusCode}");
             
             return EmptyResult.Success();
         }

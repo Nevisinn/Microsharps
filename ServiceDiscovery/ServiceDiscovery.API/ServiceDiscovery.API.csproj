@@ -20,4 +20,10 @@
       <ProjectReference Include="..\ServiceDiscovery.Models\ServiceDiscovery.Models.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
 </Project>

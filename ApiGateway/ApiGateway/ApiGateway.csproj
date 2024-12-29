@@ -21,4 +21,10 @@
       <ProjectReference Include="..\ApiGateway.Models\ApiGateway.Models.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
 </Project>

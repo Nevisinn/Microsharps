@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AbstractTaskService.DAL.Context;
 
-internal sealed class AbstractTaskDbContext : DbContext
+public sealed class AbstractTaskDbContext : DbContext
 {
     public DbSet<AbstractTask> AbstractTasks { get; set; }
 

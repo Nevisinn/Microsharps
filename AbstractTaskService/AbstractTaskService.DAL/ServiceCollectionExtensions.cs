@@ -7,7 +7,7 @@ namespace AbstractTaskService.DAL;
 public static class ServiceCollectionExtensions
 {
     public static void AddDbContext(this IServiceCollection services, string connectionString)
-    {
+    {   
         services.AddDbContext<AbstractTaskDbContext>(options
             => options.UseNpgsql(connectionString));
     }

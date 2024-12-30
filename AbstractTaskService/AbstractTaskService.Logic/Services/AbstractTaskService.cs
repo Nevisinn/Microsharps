@@ -82,6 +82,6 @@ public class AbstractTaskService : IAbstractTaskService
         
         await sender.SendMessage(task);
 
-        return Result.Ok(new RetryTaskResponse { Id = task.Id, Status = "InProgress" });
+        return Result.Ok(new RetryTaskResponse { Id = task.Id, Status = "Wait" });
     }
 }

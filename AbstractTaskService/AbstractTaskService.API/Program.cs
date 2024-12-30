@@ -27,6 +27,6 @@ void ConfigureDi(IServiceCollection services)
         options.InstanceName = "redis";
         });
     services.AddDbContext("Server=localhost;Database=AbstractTaskService;Port=5432;User Id=postgres;Password=123");
-    services.AddScoped<IAbstractTaskService, AbstractTaskService.Logic.Services.AbstractTaskService>();
     services.AddScoped<IAbstractTaskRepository, AbstractTaskRepository>();
+    services.AddScoped<IAbstractTaskService, AbstractTaskService.Logic.Services.AbstractTaskService>();
 };

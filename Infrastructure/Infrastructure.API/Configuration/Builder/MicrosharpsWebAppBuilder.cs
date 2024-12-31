@@ -3,7 +3,9 @@ using Infrastructure.API.Configuration.Logging;
 using Infrastructure.API.Configuration.ServiceDiscovery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Serilog;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Infrastructure.API.Configuration.Builder;
 
@@ -12,9 +14,9 @@ namespace Infrastructure.API.Configuration.Builder;
 /// </summary>
 public class MicrosharpsWebAppBuilder
 {
-    private readonly string serviceName;
-    private readonly WebApplicationBuilder builder;
-    private readonly WebApplicationConfig appConfig;
+    internal readonly string serviceName;
+    internal readonly WebApplicationBuilder nativeBuilder;
+    internal readonly WebApplicationConfig appConfig;
 
     /// <summary>
     /// Создаёт инстанс билдера
@@ -28,15 +30,17 @@ public class MicrosharpsWebAppBuilder
     private MicrosharpsWebAppBuilder(string serviceName, bool isStrictBuild, string[] args)
     {
         this.serviceName = serviceName;
-        builder = WebApplication.CreateBuilder(args);
+        nativeBuilder = WebApplication.CreateBuilder(args);
         appConfig = new();
     }
 
-    public MicrosharpsWebAppBuilder BaseConfiguration(bool isPrivateHosted)
+    public MicrosharpsWebAppBuilder BaseConfiguration(
+        bool isPrivateHosted, 
+        string? swaggerRequestsPrefix = null)
     {
-        builder.Services.AddEndpointsApiExplorer();
+        nativeBuilder.Services.AddEndpointsApiExplorer();
         UseControllers();
-        UseSwagger();
+        this.UseSwagger(swaggerRequestsPrefix ?? EnvironmentVars.SwaggerRequestsPrefix);
         UseLogging(true, LogSinks.OnlyLocal);
         appConfig.Add(app =>
         {
@@ -55,41 +59,25 @@ public class MicrosharpsWebAppBuilder
 
     public MicrosharpsWebAppBuilder UseControllers()
     {
-        builder.Services.AddControllers();
+        nativeBuilder.Services.AddControllers();
         appConfig.Add(app => app.MapControllers());
 
         return this;
     }
+    
 
-    public MicrosharpsWebAppBuilder UseSwagger()
-    {
-        builder.Services.AddSwaggerGen(opt => 
-        {
-            var xmlFilename = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
-            opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-        });
-        
-        appConfig.Add(app =>
-        {
-            // if (app.Environment.IsDevelopment()) TODO
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            } 
-        });
 
-        return this;
-    }
+    
 
     public MicrosharpsWebAppBuilder UseLogging(
         bool withEndpoints, 
         LogSink[]? customLogSinks = null)
     {
-        builder.ConfigureSerilog(serviceName, customLogSinks ?? LogSinks.All);
+        nativeBuilder.ConfigureSerilog(serviceName, customLogSinks ?? LogSinks.All);
         appConfig.Add(app => app.UseSerilogRequestLogging());
         if (withEndpoints)
         {
-            builder.Services.AddSingleton<ILogsService, LogsService>();
+            nativeBuilder.Services.AddSingleton<ILogsService, LogsService>();
             appConfig.Add(app => app.MapLoggingEndpoints());
         }
         return this;
@@ -101,7 +89,7 @@ public class MicrosharpsWebAppBuilder
     {
         ownHost ??= EnvironmentVars.OwhHost;
         serviceDiscoveryHost ??= EnvironmentVars.SdHost;
-        builder.Services.RegisterServiceDiscoveryConfigurationClient(serviceName, ownHost, serviceDiscoveryHost);
+        nativeBuilder.Services.RegisterServiceDiscoveryConfigurationClient(serviceName, ownHost, serviceDiscoveryHost);
         appConfig.Add(app => app.MapServiceDiscoveryEndpoints());
         appConfig.Add(app => app.ConfigureLifetimeInServiceDiscovery());
         
@@ -110,14 +98,14 @@ public class MicrosharpsWebAppBuilder
 
     public MicrosharpsWebAppBuilder ConfigureDi(Action<IServiceCollection> configuration)
     {
-        configuration(builder.Services);
+        configuration(nativeBuilder.Services);
         return this;
     }
 
 
     public void BuildAndRun()
     {
-        var app = builder.Build();
+        var app = nativeBuilder.Build();
         appConfig.Apply(app);
         
         app.Run();

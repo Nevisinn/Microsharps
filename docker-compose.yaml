@@ -1,45 +1,58 @@
-version: "3.8"
-
 services:
-  sd-api:
-    image: sd-api
-    container_name: sd-api
+  service-discovery:
+    image: cr.yandex/crp92lg5cv6m42bunkmg/service-dicovery
+    container_name: service-discovery
     environment:
       - "ASPNETCORE_ENVIRONMENT=Release"
+      - "SWAGGER_REQUESTS_PREFIX=sd" # from nginx prefixes
     ports:
       - 8888:8080
     networks:
       - my-network
 
   abstract-task-service:
-    image: abstract-task-service
+    image: cr.yandex/crp92lg5cv6m42bunkmg/abstract-task-service
     container_name: abstract-task-service
     environment:
       - "ASPNETCORE_ENVIRONMENT=Release"
       - "HOST=http://abstract-task-service:8080"
-      - "SD_HOST=http://sd-api:8080"
+      - "SD_HOST=http://service-discovery:8080"
+      - "SWAGGER_REQUESTS_PREFIX=tasks" # from nginx prefixes
     ports:
       - 7778:8080
     depends_on:
-      - sd-api
+      - service-discovery
     networks:
       - my-network
 
   api-gateway:
-    image: api-gateway
+    image: cr.yandex/crp92lg5cv6m42bunkmg/api-gateway
     container_name: api-gateway
     environment:
       - "ASPNETCORE_ENVIRONMENT=Release"
       - "HOST=http://api-gateway:8080"
-      - "SD_HOST=http://sd-api:8080"
+      - "SD_HOST=http://service-discovery:8080"
     ports:
       - 7777:8080
     depends_on:
-      - sd-api
+      - service-discovery
     networks:
       - my-network
 
 
+  nginx:
+    image: nginx
+    container_name: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+    depends_on:
+      - service-discovery
+      - abstract-task-service
+      - api-gateway
+    networks:
+      - my-network
 
 
 volumes:

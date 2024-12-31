@@ -7,7 +7,9 @@ on:
 env:
   YC_FOLDER_ID: b1gbo02dppmqosv9vsul
   CR_REGISTRY: crp92lg5cv6m42bunkmg
-  SERVICE_DISCOVERY_IMAGE: cr.yandex/crp92lg5cv6m42bunkmg/backend:last
+  SERVICE_DISCOVERY_IMAGE: cr.yandex/crp92lg5cv6m42bunkmg/service-dicovery:last
+  ABSTRACT_TASK_SERVICE_IMAGE: cr.yandex/crp92lg5cv6m42bunkmg/abstract-task-service:last
+  API_GATEWAY_IMAGE: cr.yandex/crp92lg5cv6m42bunkmg/api-gateway:last
 
 jobs:
   build-service-dicovery:
@@ -29,10 +31,47 @@ jobs:
         docker build -f ServiceDiscovery/Dockerfile -t $SERVICE_DISCOVERY_IMAGE_TAG .
         docker push $SERVICE_DISCOVERY_IMAGE_TAG
 
+  build-abstract-task-service:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Yandex Cloud Login
+      uses: yc-actions/yc-cr-login@v1
+      with:
+        yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+
+    - name: Build and push back
+      env:
+        ABSTRACT_TASK_SERVICE_IMAGE_TAG: ${{ env.ABSTRACT_TASK_SERVICE_IMAGE }}
+      run: |
+        docker build -f AbstractTaskService/Dockerfile -t $ABSTRACT_TASK_SERVICE_IMAGE_TAG .
+        docker push $ABSTRACT_TASK_SERVICE_IMAGE_TAG
+
+  build-api-gateway:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Yandex Cloud Login
+      uses: yc-actions/yc-cr-login@v1
+      with:
+        yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+
+    - name: Build and push back
+      env:
+        API_GATEWAY_IMAGE_TAG: ${{ env.API_GATEWAY_IMAGE }}
+      run: |
+        docker build -f ApiGateway/Dockerfile -t $API_GATEWAY_IMAGE_TAG .
+        docker push $API_GATEWAY_IMAGE_TAG
 
 #  deploy:
 #    runs-on: ubuntu-latest
-#    needs: [ "build-backend", "build-front-manager-page", "build-front-user-page" ]
+#    needs: [ "build-service-dicovery", "build-abstract-task-service", "build-api-gateway" ]
 #
 #    steps:
 #    - name: Connect to VM via SSH

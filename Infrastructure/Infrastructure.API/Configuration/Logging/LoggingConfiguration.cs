@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Serilog;
+using Serilog.Events;
 
 namespace Infrastructure.API.Configuration.Logging;
 
@@ -34,6 +35,8 @@ public static class LoggingConfiguration
             configuration.ConfigureElastic(serviceName, elasticsearchHost);
 
         Log.Logger = configuration
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
             .Enrich.FromLogContext()
             .Enrich.WithProperty("Service", serviceName)
             .CreateLogger();
@@ -51,6 +54,8 @@ public static class LoggingConfiguration
         if (configuration.GetSection("Serilog").Exists())
         {
             Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
                 .ReadFrom.Configuration(configuration) // Чтение конфигурации из appsettings.json
                 .CreateLogger();
             LogsPath = GetLogPathFromConfiguration(configuration);

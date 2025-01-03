@@ -9,6 +9,7 @@ env:
   CR_REGISTRY: crp92lg5cv6m42bunkmg
   SERVICE_DISCOVERY_IMAGE: cr.yandex/crp92lg5cv6m42bunkmg/service-dicovery:last
   ABSTRACT_TASK_SERVICE_IMAGE: cr.yandex/crp92lg5cv6m42bunkmg/abstract-task-service:last
+  USERS_IMAGE: cr.yandex/crp92lg5cv6m42bunkmg/users:last
   API_GATEWAY_IMAGE: cr.yandex/crp92lg5cv6m42bunkmg/api-gateway:last
 
 jobs:
@@ -49,6 +50,25 @@ jobs:
       run: |
         docker build -f AbstractTaskService/Dockerfile -t $ABSTRACT_TASK_SERVICE_IMAGE_TAG .
         docker push $ABSTRACT_TASK_SERVICE_IMAGE_TAG
+
+  build-users:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Yandex Cloud Login
+      uses: yc-actions/yc-cr-login@v1
+      with:
+        yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+
+    - name: Build and push back
+      env:
+        USERS_IMAGE_TAG: ${{ env.USERS_IMAGE }}
+      run: |
+        docker build -f Users/Dockerfile -t $USERS_IMAGE_TAG .
+        docker push $USERS_IMAGE_TAG
 
   build-api-gateway:
     runs-on: ubuntu-latest

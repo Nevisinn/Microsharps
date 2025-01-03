@@ -120,6 +120,7 @@ services:
       - "REDIS_PORT=6379"
     ports:
       - 5555:8080
+    restart: always
     depends_on:
       - postgres-tasks
       - rabbitmq

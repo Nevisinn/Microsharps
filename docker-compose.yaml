@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password 
     ports:
-      - "5433:5432"
+      - 5432:5432
     volumes:
       - stackup_postgres_data:/var/lib/postgresql/data/
     networks:
@@ -14,9 +14,9 @@ services:
 
   elasticsearch:
     container_name: elasticsearch
-    image: cr.yandex/crp92lg5cv6m42bunkmg/elasticsearch:latest
+    image: cr.yandex/crp92lg5cv6m42bunkmg/elasticsearch
     ports:
-      - "9200:9200"
+      - 9200:9200
     environment:
       discovery.type: single-node
       xpack.security.enabled: false
@@ -29,7 +29,7 @@ services:
     container_name: kibana
     image: cr.yandex/crp92lg5cv6m42bunkmg/kibana
     ports:
-      - "5601:5601"
+      - 5601:5601
     depends_on:
       - elasticsearch
     environment:
@@ -133,7 +133,7 @@ services:
       - "HOST=http://users:8080"
       - "SD_HOST=http://service-discovery:8080"
       - "SWAGGER_REQUESTS_PREFIX=users" # from nginx prefixes
-      - "DB_CONNECTION_STRING=Server=localhost;Port=5433;Database=users;User Id=postgres;Password=password"
+      - "DB_CONNECTION_STRING=host=postgres-users;Port=5432;Database=users;User Id=postgres;Password=password"
     ports:
       - 6666:8080
     depends_on:

@@ -18,6 +18,11 @@ public class TasksController : ControllerBase
         this.abstractTaskService = abstractTaskService;
     }
 
+    /// <summary>
+    /// Получить задачу по id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<GetTaskResponseModel>> GetTask([FromRoute] Guid id)
     {
@@ -26,6 +31,11 @@ public class TasksController : ControllerBase
 
     }
     
+    /// <summary>
+    /// Создать задачу и отправить на выполнение
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost("AddTask")]
     public async Task<ActionResult<AddTaskResponseModel>> AddTask(AddTaskRequestModel request)
     {
@@ -33,6 +43,11 @@ public class TasksController : ControllerBase
         return response.ActionResult();
     }
     
+    /// <summary>
+    /// Повторно отправить задачу
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost("RetryTask")]
     public async Task<ActionResult<RetryTaskResponseModel>> RetryTask(RetryTaskRequestModel request)
     {

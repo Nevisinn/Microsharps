@@ -15,6 +15,9 @@ COPY ["ServiceDiscovery/ServiceDiscovery.Models/ServiceDiscovery.Models.csproj",
 WORKDIR /src/AbstractTaskService
 COPY ["AbstractTaskService/AbstractTaskService.Client/AbstractTaskService.Client.csproj", "AbstractTaskService.Client/"]
 COPY ["AbstractTaskService/AbstractTaskService.Models/AbstractTaskService.Models.csproj", "AbstractTaskService.Models/"]
+WORKDIR /src/Users
+COPY ["Users/Users.Client/Users.Client.csproj", "Users.Client/"]
+COPY ["Users/Users.Models/Users.Models.csproj", "Users.Models/"]
 WORKDIR /src/service
 COPY ["ApiGateway/ApiGateway/ApiGateway.csproj", "ApiGateway/"]
 COPY ["ApiGateway/ApiGateway.Logic/ApiGateway.Logic.csproj", "ApiGateway.Logic/"]
@@ -24,6 +27,7 @@ WORKDIR /src
 COPY ./Infrastructure ./Infrastructure
 COPY ./ServiceDiscovery ./ServiceDiscovery
 COPY ./AbstractTaskService ./AbstractTaskService
+COPY ./Users ./Users
 COPY ./ApiGateway ./service
 WORKDIR "/src/service/ApiGateway"
 RUN dotnet build "ApiGateway.csproj" -c Release -o /app/build

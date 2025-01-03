@@ -64,10 +64,12 @@ public class MicrosharpsWebAppBuilder
 
         return this;
     }
-    
 
-
-    
+    public MicrosharpsWebAppBuilder AddDbContext(Action<IServiceCollection> addFunc)
+    {
+        addFunc(nativeBuilder.Services);
+        return this;
+    }
 
     public MicrosharpsWebAppBuilder UseLogging(
         bool withEndpoints, 

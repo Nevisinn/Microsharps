@@ -1,6 +1,6 @@
 services:
   service-discovery:
-    image: cr.yandex/crp92lg5cv6m42bunkmg/service-dicovery
+    image: cr.yandex/crp92lg5cv6m42bunkmg/service-dicovery:last
     container_name: service-discovery
     environment:
       - "ASPNETCORE_ENVIRONMENT=Release"
@@ -11,7 +11,7 @@ services:
       - my-network
 
   abstract-task-service:
-    image: cr.yandex/crp92lg5cv6m42bunkmg/abstract-task-service
+    image: cr.yandex/crp92lg5cv6m42bunkmg/abstract-task-service:last
     container_name: abstract-task-service
     environment:
       - "ASPNETCORE_ENVIRONMENT=Release"
@@ -25,8 +25,24 @@ services:
     networks:
       - my-network
 
+  users:
+    image: cr.yandex/crp92lg5cv6m42bunkmg/users:last
+    container_name: users
+    environment:
+      - "ASPNETCORE_ENVIRONMENT=Release"
+      - "HOST=http://users:8080"
+      - "SD_HOST=http://service-discovery:8080"
+      - "SWAGGER_REQUESTS_PREFIX=users" # from nginx prefixes
+    ports:
+      - 7778:8080
+    depends_on:
+      - service-discovery
+    networks:
+      - my-network
+
+
   api-gateway:
-    image: cr.yandex/crp92lg5cv6m42bunkmg/api-gateway
+    image: cr.yandex/crp92lg5cv6m42bunkmg/api-gateway:last
     container_name: api-gateway
     environment:
       - "ASPNETCORE_ENVIRONMENT=Release"
@@ -50,6 +66,7 @@ services:
     depends_on:
       - service-discovery
       - abstract-task-service
+      - users
       - api-gateway
     networks:
       - my-network

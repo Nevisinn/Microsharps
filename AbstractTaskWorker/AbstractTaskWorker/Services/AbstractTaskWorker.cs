@@ -1,6 +1,6 @@
 using System.Text.Json;
+using AbstractTaskService.DAL.Entities;
 using AbstractTaskService.DAL.Repositories;
-using AbstractTaskService.Logic.Models;
 using Microsoft.Extensions.Caching.Distributed;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;

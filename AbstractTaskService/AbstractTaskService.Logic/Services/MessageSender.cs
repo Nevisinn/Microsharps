@@ -1,5 +1,5 @@
 using System.Text.Json;
-using AbstractTaskService.Logic.Models;
+using AbstractTaskService.DAL.Entities;
 using RabbitMQ.Client;
 
 namespace AbstractTaskService.Logic.Services;

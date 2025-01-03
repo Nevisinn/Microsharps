@@ -1,4 +1,4 @@
-namespace AbstractTaskService.Logic.Models;
+namespace AbstractTaskService.DAL.Entities;
 
 public class AbstractTask
 {   

@@ -36,7 +36,7 @@ public class TasksController : ControllerBase
     }
     
     [HttpPost("RetryTask")]
-    public async Task<ActionResult<RetryTaskResponseModel>> RetryTask(RetryTaskModel request)
+    public async Task<ActionResult<RetryTaskResponseModel>> RetryTask(RetryTaskRequestModel request)
     {
         var response = await abstractTaskService.RetryTask(ApiMapper.Map(request));
         return response.ActionResult(ApiMapper.Map);

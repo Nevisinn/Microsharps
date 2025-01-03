@@ -1,5 +1,5 @@
 using AbstractTaskService.DAL.Context;
-using AbstractTaskService.Logic.Models;
+using AbstractTaskService.DAL.Entities;
 
 namespace AbstractTaskService.DAL.Repositories;
 

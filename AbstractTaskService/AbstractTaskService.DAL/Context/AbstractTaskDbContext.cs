@@ -1,4 +1,4 @@
-using AbstractTaskService.Logic.Models;
+using AbstractTaskService.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace AbstractTaskService.DAL.Context;

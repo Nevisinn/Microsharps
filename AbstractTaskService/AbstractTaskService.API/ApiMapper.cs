@@ -1,5 +1,4 @@
 using System.Globalization;
-using AbstractTaskService.Logic.Models;
 using AbstractTaskService.Logic.Requests;
 using AbstractTaskService.Logic.Response;
 using AbstractTaskService.Models;
@@ -38,7 +37,7 @@ public static class ApiMapper
             Status = response.Status
         };
 
-    public static RetryTaskRequest Map(RetryTaskModel request)
+    public static RetryTaskRequest Map(RetryTaskRequestModel request)
         => new()
         {
             Id = request.Id

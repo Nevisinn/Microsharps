@@ -1,12 +1,8 @@
 ﻿using System.Diagnostics;
-using System.Text;
-using System.Text.Json;
-using AbstractTaskService.Logic.Models;
+using AbstractTaskService.DAL.Entities;
 using Microsoft.Extensions.Caching.Distributed;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 
-namespace AbstractTaskWorker;
+namespace AbstractTaskWorker.Services;
 
 public class TaskExecutor
 {

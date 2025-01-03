@@ -1,6 +1,6 @@
 ﻿using System.Text;
+using AbstractTaskService.DAL.Entities;
 using AbstractTaskService.DAL.Repositories;
-using AbstractTaskService.Logic.Models;
 using AbstractTaskService.Logic.Requests;
 using AbstractTaskService.Logic.Response;
 using Infrastructure;

@@ -19,7 +19,6 @@ builder.BuildAndRun();
 
 void ConfigureDi(IServiceCollection services)
 {
-    services.AddSingleton<ITestService, TestService>();
     services.AddSingleton<IAbstractTaskServiceClient, AbstractTaskServiceClient>(); // TODO:  add DI to Logic and move into it  
     services.AddSingleton<IUsersService, UsersService>();
     services.AddSingleton<IUsersClient, UsersClient>();

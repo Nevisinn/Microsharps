@@ -10,7 +10,7 @@ public class MessageSender
 
     public MessageSender()
     {
-        factory = new ConnectionFactory { HostName = "localhost" };
+        factory = new ConnectionFactory { HostName = EnvironmentVars.RabbitHost };
     }
 
     public async Task SendMessage(AbstractTask message)
@@ -18,11 +18,11 @@ public class MessageSender
         await using var connection = await factory.CreateConnectionAsync();
         await using var channel = await connection.CreateChannelAsync();
         
-        await channel.QueueDeclareAsync(queue: "hello", durable: false, exclusive: false, autoDelete: false,
+        await channel.QueueDeclareAsync(queue: EnvironmentVars.RabbitQueueName, durable: false, exclusive: false, autoDelete: false,
             arguments: null);
         
         var messageBody = await SerializeToByte(message);
-        await channel.BasicPublishAsync(exchange: string.Empty, routingKey: "hello", body: messageBody);
+        await channel.BasicPublishAsync(exchange: string.Empty, routingKey: EnvironmentVars.RabbitHost, body: messageBody);
     }
     
     private async Task<byte[]> SerializeToByte(AbstractTask obj)

@@ -1,4 +1,5 @@
 using System.Reflection;
+using AbstractTaskService.API;
 using AbstractTaskService.DAL;
 using AbstractTaskService.DAL.Context;
 using AbstractTaskService.DAL.Repositories;
@@ -23,10 +24,10 @@ builder.BuildAndRun();
 void ConfigureDi(IServiceCollection services)
 {
     services.AddStackExchangeRedisCache(options => {
-        options.Configuration = "localhost";
-        options.InstanceName = "redis";
+        options.Configuration = EnvironmentVars.RedisConfig;
+        options.InstanceName = EnvironmentVars.RedisInstanceName;
         });
-    services.AddDbContext("Server=localhost;Database=AbstractTaskService;Port=5432;User Id=postgres;Password=123");
+    services.AddDbContext(EnvironmentVars.DataBase);
     services.AddScoped<IAbstractTaskRepository, AbstractTaskRepository>();
     services.AddScoped<IAbstractTaskService, AbstractTaskService.Logic.Services.AbstractTaskService>();
-};
+}

@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway.Models", "ApiGat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractTaskService.Models", "..\AbstractTaskService\AbstractTaskService.Models\AbstractTaskService.Models.csproj", "{8A2B3D87-8E11-43B6-BB2B-EC8CCB049217}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Client", "..\Infrastructure\Infrastructure.Client\Infrastructure.Client.csproj", "{B28E2FC9-DC40-4A9F-8AAC-15A4A729F9FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{8A2B3D87-8E11-43B6-BB2B-EC8CCB049217}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A2B3D87-8E11-43B6-BB2B-EC8CCB049217}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A2B3D87-8E11-43B6-BB2B-EC8CCB049217}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B28E2FC9-DC40-4A9F-8AAC-15A4A729F9FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B28E2FC9-DC40-4A9F-8AAC-15A4A729F9FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B28E2FC9-DC40-4A9F-8AAC-15A4A729F9FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B28E2FC9-DC40-4A9F-8AAC-15A4A729F9FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

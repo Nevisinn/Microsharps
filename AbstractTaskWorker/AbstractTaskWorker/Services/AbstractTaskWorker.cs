@@ -23,11 +23,11 @@ public class AbstractTaskWorker : BackgroundService
 
     private async Task InitAsync()
     {
-        var factory = new ConnectionFactory { HostName = "localhost" };
+        var factory = new ConnectionFactory { HostName = EnvironmentVars.RabbitHost };
         connection = await factory.CreateConnectionAsync();
         channel = await connection.CreateChannelAsync();
         await channel.QueueDeclareAsync(
-            queue: "hello", 
+            queue: EnvironmentVars.RabbitQueueName, 
             durable: false,
             exclusive: false,
             autoDelete: false,
@@ -38,7 +38,11 @@ public class AbstractTaskWorker : BackgroundService
         await InitAsync();
         var consumer = new AsyncEventingBasicConsumer(channel);
         await ReceiveMessage(consumer);
-        await channel.BasicConsumeAsync(queue: "hello", autoAck: false, consumer: consumer, cancellationToken: stoppingToken);
+        await channel.BasicConsumeAsync(
+            queue: EnvironmentVars.RabbitQueueName,
+            autoAck: false, 
+            consumer: consumer,
+            cancellationToken: stoppingToken);
     }
     private Task ReceiveMessage(AsyncEventingBasicConsumer consumer)
     {   

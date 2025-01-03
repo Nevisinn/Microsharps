@@ -10,7 +10,7 @@ public interface IAbstractTaskServiceClient
 {
     Task<Result<AddTaskResponseModel>> AddTask(AddTaskRequestModel request);
 
-    Task<Result<GetTaskResponseModel>> GetTask(GetTaskResponseModel request);
+    Task<Result<GetTaskResponseModel>> GetTask(Guid id);
     Task<Result<RetryTaskResponseModel>> RetryTask(RetryTaskRequestModel request);
 }
 
@@ -32,9 +32,9 @@ public class AbstractTaskServiceClient : IAbstractTaskServiceClient
         return Result.Ok(await response.Value.Content.FromJsonOrThrow<AddTaskResponseModel>());
     }
 
-    public async Task<Result<GetTaskResponseModel>> GetTask(GetTaskResponseModel request)
+    public async Task<Result<GetTaskResponseModel>> GetTask(Guid id)
     {
-        var response = await sdClient.GetAsync("api/Tasks/");
+        var response = await sdClient.GetAsync($"api/Tasks/{id}");
         if (!response.IsSuccess)
             return Result.ErrorFromHttp<GetTaskResponseModel>(response);
 

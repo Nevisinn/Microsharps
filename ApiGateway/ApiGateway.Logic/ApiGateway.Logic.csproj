@@ -10,6 +10,7 @@
       <ProjectReference Include="..\..\AbstractTaskService\AbstractTaskService.Client\AbstractTaskService.Client.csproj" />
       <ProjectReference Include="..\..\AbstractTaskService\AbstractTaskService.Models\AbstractTaskService.Models.csproj" />
       <ProjectReference Include="..\..\Infrastructure\Infrastructure\Infrastructure.csproj" />
+      <ProjectReference Include="..\ApiGateway.Models\ApiGateway.Models.csproj" />
     </ItemGroup>
 
 </Project>

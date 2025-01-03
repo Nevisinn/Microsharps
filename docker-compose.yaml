@@ -57,7 +57,7 @@ services:
       - "SD_HOST=http://service-discovery:8080"
       - "SWAGGER_REQUESTS_PREFIX=tasks" # from nginx prefixes
       - "QUEUE_NAME=hello"
-      - "DB_HOST=Server=localhost;Database=AbstractTaskService;Port=5433;User Id=postgres;Password=123"
+      - "DB_HOST=Server=localhost;Database=AbstractTaskService;Port=5432;User Id=postgres;Password=123"
       - "REDIS_CONF=localhost"
       - "REDIS_NAME=redis"
       - "RABBIT_HOST=localhost"
@@ -74,7 +74,6 @@ services:
     container_name: rabbitmq
     environment:
       - "QUEUE_NAME=hello"
-      - "RABBIT_HOST=rabbit"
       - "RABBITMQ_DEFAULT_USER:guest"
       - "RABBITMQ_DEFAULT_PASS:guest"
     ports:
@@ -86,9 +85,6 @@ services:
   redis:
     image: redis:latest
     container_name: redis_container
-    environment:
-      - "REDIS_CONF=localhost"
-      - "REDIS_NAME=redis"
     ports:
       - "6380:6379"
     volumes:
@@ -115,9 +111,11 @@ services:
       - "HOST=http://abstract-task-worker:8080"
       - "QUEUE_NAME=hello"
       - "DB_HOST=Server=postgres-tasks;Database=AbstractTaskService;Port=5432;User Id=postgres;Password=123"
-      - "REDIS_CONF=localhost"
+      - "REDIS_CONF=redis"
       - "REDIS_NAME=redis"
-      - "RABBIT_HOST=localhost"
+      - "RABBIT_HOST=rabbitmq"
+      - "RABBITMQ_PORT=5672"
+      - "REDIS_PORT=6379"
     ports:
       - 5555:8080
     depends_on:

@@ -34,7 +34,7 @@ services:
       - "SD_HOST=http://service-discovery:8080"
       - "SWAGGER_REQUESTS_PREFIX=users" # from nginx prefixes
     ports:
-      - 7778:8080
+      - 6666:8080
     depends_on:
       - service-discovery
     networks:

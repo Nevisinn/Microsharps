@@ -22,7 +22,7 @@ public class MessageSender
             arguments: null);
         
         var messageBody = await SerializeToByte(message);
-        await channel.BasicPublishAsync(exchange: string.Empty, routingKey: EnvironmentVars.RabbitHost, body: messageBody);
+        await channel.BasicPublishAsync(exchange: string.Empty, routingKey: EnvironmentVars.RabbitQueueName, body: messageBody);
     }
     
     private async Task<byte[]> SerializeToByte(AbstractTask obj)

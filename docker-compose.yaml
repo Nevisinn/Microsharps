@@ -58,7 +58,7 @@ services:
       - "SWAGGER_REQUESTS_PREFIX=tasks" # from nginx prefixes
       - "QUEUE_NAME=hello"
       - "DB_HOST=Server=postgres-tasks;Database=AbstractTaskService;Port=5432;User Id=postgres;Password=123"
-      - "REDIS_CONF=redis"
+      - "REDIS_CONF=redis:6379"
       - "REDIS_NAME=redis"
       - "RABBIT_HOST=rabbitmq"
       - "RABBITMQ_PORT=5672"
@@ -68,6 +68,8 @@ services:
     depends_on:
       - postgres-tasks
       - service-discovery
+      - rabbitmq
+      - redis
     networks:
       - my-network
 
@@ -86,11 +88,13 @@ services:
 
   redis:
     image: redis:latest
-    container_name: redis_container
+    container_name: redis
     ports:
       - "6380:6379"
     volumes:
       - ./redisdata:/data
+    networks:
+      - my-network
 
   postgres-tasks:
     image: postgres
@@ -113,7 +117,7 @@ services:
       - "HOST=http://abstract-task-worker:8080"
       - "QUEUE_NAME=hello"
       - "DB_HOST=Server=postgres-tasks;Database=AbstractTaskService;Port=5432;User Id=postgres;Password=123"
-      - "REDIS_CONF=redis"
+      - "REDIS_CONF=redis:6379"
       - "REDIS_NAME=redis"
       - "RABBIT_HOST=rabbitmq"
       - "RABBITMQ_PORT=5672"

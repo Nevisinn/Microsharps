@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password 
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - stackup_postgres_data:/var/lib/postgresql/data/
     networks:
@@ -16,7 +16,7 @@ services:
     container_name: elasticsearch
     image: cr.yandex/crp92lg5cv6m42bunkmg/elasticsearch
     ports:
-      - 9200:9200
+      - "9200:9200"
     environment:
       discovery.type: single-node
       xpack.security.enabled: false
@@ -29,7 +29,7 @@ services:
     container_name: kibana
     image: cr.yandex/crp92lg5cv6m42bunkmg/kibana
     ports:
-      - 5601:5601
+      - "5601:5601"
     depends_on:
       - elasticsearch
     environment:
@@ -42,7 +42,7 @@ services:
       - "ASPNETCORE_ENVIRONMENT=Release"
       - "SWAGGER_REQUESTS_PREFIX=sd" # from nginx prefixes
     ports:
-      - 8888:8080
+      - "8888:8080"
     depends_on:
       - elasticsearch
     networks:
@@ -57,14 +57,14 @@ services:
       - "SD_HOST=http://service-discovery:8080"
       - "SWAGGER_REQUESTS_PREFIX=tasks" # from nginx prefixes
       - "QUEUE_NAME=hello"
-      - "DB_HOST=Server=postgres-tasks;Database=AbstractTaskService;Port=5432;User Id=postgres;Password=123"
+      - "DB_HOST=host=postgres-tasks;Database=AbstractTaskService;Port=5432;User Id=postgres;Password=123"
       - "REDIS_CONF=redis:6379"
       - "REDIS_NAME=redis"
       - "RABBIT_HOST=rabbitmq"
       - "RABBITMQ_PORT=5672"
       - "REDIS_PORT=6379"
     ports:
-      - 7778:8080
+      - "7778:8080"
     depends_on:
       - postgres-tasks
       - service-discovery
@@ -81,8 +81,8 @@ services:
       - "RABBITMQ_DEFAULT_USER:guest"
       - "RABBITMQ_DEFAULT_PASS:guest"
     ports:
-      - 5672:5672
-      - 15672:15672
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - my-network
 
@@ -116,14 +116,14 @@ services:
       - "ASPNETCORE_ENVIRONMENT=Release"
       - "HOST=http://abstract-task-worker:8080"
       - "QUEUE_NAME=hello"
-      - "DB_HOST=Server=postgres-tasks;Database=AbstractTaskService;Port=5432;User Id=postgres;Password=123"
+      - "DB_HOST=host=postgres-tasks;Database=AbstractTaskService;Port=5432;User Id=postgres;Password=123"
       - "REDIS_CONF=redis:6379"
       - "REDIS_NAME=redis"
       - "RABBIT_HOST=rabbitmq"
       - "RABBITMQ_PORT=5672"
       - "REDIS_PORT=6379"
     ports:
-      - 5555:8080
+      - "5555:8080"
     restart: always
     depends_on:
       - postgres-tasks
@@ -142,7 +142,7 @@ services:
       - "SWAGGER_REQUESTS_PREFIX=users" # from nginx prefixes
       - "DB_CONNECTION_STRING=host=postgres-users;Port=5432;Database=users;User Id=postgres;Password=password"
     ports:
-      - 6666:8080
+      - "6666:8080"
     depends_on:
       - service-discovery
       - postgres-users
@@ -158,7 +158,7 @@ services:
       - "HOST=http://api-gateway:8080"
       - "SD_HOST=http://service-discovery:8080"
     ports:
-      - 7777:8080
+      - "7777:8080"
     depends_on:
       - service-discovery
     networks:
@@ -171,7 +171,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
-      - 80:80
+      - "80:80"
     depends_on:
       - service-discovery
       - abstract-task-service

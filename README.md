@@ -10,16 +10,6 @@
 
 Сервис для постановки, выполнения и мониторинга абстрактных задач с возможностью контроля времени жизни процесса (TTL, Time-to-Live).
 
-## Использование
-
-Сервисы доступны по адресам:
-1. ApiGateway -http://84.252.135.174/swagger/index.html
-2. Service Discovery - http://84.252.135.174/sd/swagger/index.html
-3. Users - http://84.252.135.174/users/swagger/index.html
-4. Abstract task service -http://84.252.135.174/tasks/swagger/index.html
-5. Elasticsearch - http://84.252.135.174:9200/
-6. Kibana - http://84.252.135.174:5601/
-
 ## Описание
 
  ### Архитектура
